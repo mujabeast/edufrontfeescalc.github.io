@@ -4,51 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tuition Fee Calculator</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Tuition Fee Calculator</h1>
+    <div class="container">
+        <h1>EduFront Tuition Fee Calculator (2025)</h1>
+        
+        <form id="feeForm">
+            <label for="level">Select Level:</label>
+            <select id="level" required>
+                <option value="">--Select Level--</option>
+                <option value="K2">K2</option>
+                <option value="Primary1">Primary 1</option>
+                <option value="Primary2">Primary 2</option>
+                <option value="Primary3">Primary 3</option>
+                <option value="Primary4">Primary 4</option>
+                <option value="Primary5">Primary 5</option>
+                <option value="Primary6">Primary 6</option>
+                <option value="Secondary1">Secondary 1</option>
+                <option value="Secondary2">Secondary 2</option>
+                <option value="Secondary3">Secondary 3</option>
+                <option value="ON">O/N Levels</option>
+            </select>
 
-    <label for="level">Level:</label>
-    <select id="level" name="level">
-        <option value="k2">K2</option>
-        <option value="p1">Primary 1</option>
-        <option value="p2">Primary 2</option>
-        <option value="p3">Primary 3</option>
-        <option value="p4">Primary 4</option>
-        <option value="p5">Primary 5</option>
-        <option value="p6">Primary 6</option>
-        <option value="s1">Secondary 1</option>
-        <option value="s2">Secondary 2</option>
-        <option value="s3">Secondary 3</option>
-        <option value="oLevels">O/N Levels</option>
-    </select>
+            <label for="subjects">Number of Subjects:</label>
+            <input type="number" id="subjects" min="1" max="5" required>
 
-    <br><br>
+            <label for="siblings">Number of Siblings (for additional discount):</label>
+            <input type="number" id="siblings" min="0" required>
 
-    <label for="subjects">Number of Subjects:</label>
-    <select id="subjects" name="subjects">
-        <option value="1">1 Subject</option>
-        <option value="2">2 Subjects (5% Discount)</option>
-        <option value="3">3 Subjects (10% Discount)</option>
-        <option value="4">4 Subjects (15% Discount)</option>
-        <option value="5">5 Subjects (20% Discount)</option>
-    </select>
+            <label for="paymentPlan">Payment Plan:</label>
+            <select id="paymentPlan" required>
+                <option value="none">None</option>
+                <option value="half">Half Yearly (2% off)</option>
+                <option value="annual">Annually (5% off)</option>
+            </select>
 
-    <br><br>
+            <button type="button" onclick="calculateFee()">Calculate Fee</button>
+        </form>
 
-    <label for="paymentPlan">Payment Plan:</label>
-    <select id="paymentPlan" name="paymentPlan">
-        <option value="none">None</option>
-        <option value="half-yearly">Half-Yearly (2% Off)</option>
-        <option value="annually">Annually (5% Off)</option>
-    </select>
+        <h2 id="totalFee"></h2>
+    </div>
 
-    <br><br>
-
-    <button id="calculateFees">Calculate Total Fees</button>
-
-    <h3>Total Monthly Fees: <span id="totalFees"></span></h3>
-
-    <script src="tuitionCalc.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
