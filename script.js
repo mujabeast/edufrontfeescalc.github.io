@@ -1,44 +1,39 @@
-const feesData = {
-    K2: { 1: 170, 2: 162, 3: 153, 4: 145, 5: 136 },
-    Primary1: { 1: 180, 2: 171, 3: 162, 4: 153, 5: 144 },
-    Primary2: { 1: 190, 2: 181, 3: 171, 4: 162, 5: 152 },
-    Primary3: { 1: 200, 2: 190, 3: 180, 4: 170, 5: 160 },
-    Primary4: { 1: 210, 2: 200, 3: 189, 4: 179, 5: 168 },
-    Primary5: { 1: 220, 2: 209, 3: 198, 4: 187, 5: 176 },
-    Primary6: { 1: 230, 2: 219, 3: 207, 4: 196, 5: 184 },
-    Secondary1: { 1: 240, 2: 228, 3: 216, 4: 204, 5: 192 },
-    Secondary2: { 1: 250, 2: 238, 3: 225, 4: 213, 5: 200 },
-    Secondary3: { 1: 280, 2: 266, 3: 252, 4: 238, 5: 224 },
-    ON: { 1: 300, 2: 285, 3: 270, 4: 255, 5: 240 }
-};
+function calculateFees() {
+  const level = parseFloat(document.getElementById('level').value);
+  const subjects = parseInt(document.getElementById('subjects').value);
+  const siblings = parseInt(document.getElementById('siblings').value);
+  const paymentPlan = parseFloat(document.getElementById('paymentPlan').value);
 
-function calculateFee() {
-    const level = document.getElementById("level").value;
-    const subjects = parseInt(document.getElementById("subjects").value);
-    const siblings = parseInt(document.getElementById("siblings").value);
-    const paymentPlan = document.getElementById("paymentPlan").value;
+  const registrationFee = 30;
+  const lmsFee = 60;
+  const deposit = 50;
 
-    if (level && subjects) {
-        let feePerSubject = feesData[level][subjects];
-        let totalFee = feePerSubject * subjects;
+  let subjectDiscount = 0;
+  if (subjects === 2) subjectDiscount = 5;
+  if (subjects === 3) subjectDiscount = 10;
+  if (subjects === 4) subjectDiscount = 15;
+  if (subjects >= 5) subjectDiscount = 20;
 
-        // Apply sibling discount
-        if (siblings >= 2) {
-            totalFee *= 0.85; // 15% discount for 2 or more siblings
-        }
+  let siblingDiscount = 0;
+  if (siblings === 1) siblingDiscount = 5;
+  if (siblings >= 2) siblingDiscount = 10;
 
-        // Apply payment plan discount
-        if (paymentPlan === "half") {
-            totalFee *= 0.98; // 2% off
-        } else if (paymentPlan === "annual") {
-            totalFee *= 0.95; // 5% off
-        }
+  const subjectCost = level * subjects;
+  const discount = (subjectCost * (subjectDiscount + siblingDiscount + paymentPlan)) / 100;
+  const totalCost = subjectCost - discount + registrationFee + lmsFee + deposit;
 
-        // Add 9% GST
-        totalFee *= 1.09;
+  document.getElementById('breakdown').innerHTML = `
+    <h3>Breakdown:</h3>
+    <p>Level Fee: $${level}/subject</p>
+    <p>Number of Subjects: ${subjects}</p>
+    <p>Subject Cost: $${subjectCost.toFixed(2)}</p>
+    <p>Discount Applied: ${subjectDiscount + siblingDiscount + paymentPlan}%</p>
+    <p>Registration Fee: $${registrationFee}</p>
+    <p>LMS & Materials Fee: $${lmsFee}</p>
+    <p>Deposit: $${deposit}</p>
+  `;
 
-        document.getElementById("totalFee").innerText = `Total Fee (with GST): $${totalFee.toFixed(2)}`;
-    } else {
-        document.getElementById("totalFee").innerText = "Please fill in all fields.";
-    }
+  document.getElementById('total').innerHTML = `
+    <h3>Total Cost: $${totalCost.toFixed(2)}</h3>
+  `;
 }
