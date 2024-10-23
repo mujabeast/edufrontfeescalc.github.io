@@ -4,26 +4,20 @@ body {
 }
 
 h1 {
-    color: #333;
-}
-
-form {
-    margin-bottom: 20px;
+    color: #1e90ff;
 }
 
 label {
-    display: block;
-    margin-bottom: 10px;
+    font-size: 1.1em;
 }
 
-select, input {
-    padding: 8px;
-    margin-bottom: 20px;
-    width: 100%;
+select, button {
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 1em;
 }
 
 button {
-    padding: 10px 15px;
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -34,7 +28,12 @@ button:hover {
     background-color: #45a049;
 }
 
-#result {
-    font-size: 1.2em;
-    color: #333;
+h3 {
+    margin-top: 20px;
+    color: #ff6347;
+}
+
+#totalFees {
+    font-weight: bold;
+    font-size: 1.3em;
 }
