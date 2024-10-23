@@ -1,60 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tuition Fee Calculator</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-  <h1>Tuition Fee Calculator</h1>
-  
-  <form id="feeForm">
-    <label for="level">Level:</label>
-    <select id="level">
-      <option value="170">K2</option>
-      <option value="180">Primary 1</option>
-      <option value="190">Primary 2</option>
-      <option value="200">Primary 3</option>
-      <option value="210">Primary 4</option>
-      <option value="220">Primary 5</option>
-      <option value="230">Primary 6</option>
-      <option value="240">Secondary 1</option>
-      <option value="250">Secondary 2</option>
-      <option value="280">Secondary 3</option>
-      <option value="300">O/N Levels</option>
-    </select>
-
-    <label for="subjects">Number of Subjects:</label>
-    <select id="subjects">
-      <option value="1">1</option>
-      <option value="2">2 (5% Discount)</option>
-      <option value="3">3 (10% Discount)</option>
-      <option value="4">4 (15% Discount)</option>
-      <option value="5">5 or more (20% Discount)</option>
-    </select>
-
-    <label for="siblings">Number of Siblings:</label>
-    <select id="siblings">
-      <option value="0">None</option>
-      <option value="1">1 Sibling (5% Discount)</option>
-      <option value="2">2 Siblings (10% Discount)</option>
-    </select>
-
-    <label for="paymentPlan">Payment Plan:</label>
-    <select id="paymentPlan">
-      <option value="0">None</option>
-      <option value="2">Half-Yearly (2% Additional Discount)</option>
-      <option value="5">Annually (5% Additional Discount)</option>
-    </select>
-
-    <button type="button" onclick="calculateFees()">Calculate</button>
-  </form>
-
-  <div id="breakdown"></div>
-  <div id="total"></div>
-
-  <script src="script.js"></script>
-</body>
-</html>
+<div class="fee-breakdown">
+  <h2>Fee Breakdown</h2>
+  <table id="feeTable" class="styled-table">
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>Amount (SGD)</th>
+      </tr>
+    </thead>
+    <tbody id="breakdownTable">
+      <tr>
+        <td>Programme Fee (Base, per subject)</td>
+        <td id="baseFee">--</td>
+      </tr>
+      <tr>
+        <td>Bundle Discount (per subject)</td>
+        <td id="bundleDiscount">--</td>
+      </tr>
+      <tr>
+        <td>Sibling Discount (if applicable)</td>
+        <td id="siblingDiscount">--</td>
+      </tr>
+      <tr>
+        <td>Additional Payment Plan Discount</td>
+        <td id="paymentPlanDiscount">--</td>
+      </tr>
+      <tr>
+        <td>Registration Fee (one-time)</td>
+        <td>$30</td>
+      </tr>
+      <tr>
+        <td>LMS & Materials Fee (per semester)</td>
+        <td>$60</td>
+      </tr>
+      <tr>
+        <td>Refundable Deposit (per programme)</td>
+        <td>$50</td>
+      </tr>
+      <tr>
+        <td>GST (9%)</td>
+        <td id="gstAmount">--</td>
+      </tr>
+      <tr>
+        <td>Total Fee</td>
+        <td id="totalFee">--</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
