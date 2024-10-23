@@ -31,4 +31,6 @@ function calculateFees() {
     document.getElementById('bundleDiscount').innerText = '-$' + bundleDiscount.toFixed(2);
     document.getElementById('siblingDiscount').innerText = '-$' + siblingDiscount.toFixed(2);
     document.getElementById('paymentPlanDiscount').innerText = '-$' + paymentPlanDiscount.toFixed(2);
-    document.getElementById('gstAmount').innerText = '$' + gst
+    document.getElementById('gstAmount').innerText = '$' + gst.toFixed(2);
+    document.getElementById('totalFee').innerText = '$' + totalFee.toFixed(2);
+}
