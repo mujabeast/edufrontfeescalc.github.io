@@ -1,9 +1,15 @@
-.container {
+body {
   font-family: Arial, sans-serif;
-  width: 60%;
-  margin: auto;
+  background-color: #f0f8ff;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 80%;
+  margin: 20px auto;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -13,12 +19,43 @@ h1 {
   color: #333;
 }
 
+.controls label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+
+.controls input,
+.controls select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
 .styled-table {
   width: 100%;
   border-collapse: collapse;
   margin: 25px 0;
-  font-size: 18px;
+  font-size: 1.2em;
   text-align: left;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
 .styled-table thead tr {
@@ -27,9 +64,9 @@ h1 {
   text-align: left;
 }
 
-.styled-table th, .styled-table td {
+.styled-table th,
+.styled-table td {
   padding: 12px 15px;
-  border: 1px solid #dddddd;
 }
 
 .styled-table tbody tr {
@@ -44,31 +81,7 @@ h1 {
   border-bottom: 2px solid #009879;
 }
 
-.controls {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.controls label {
+.styled-table tbody tr.active-row {
   font-weight: bold;
-}
-
-.controls select, .controls input {
-  padding: 8px;
-  font-size: 16px;
-}
-
-.controls button {
-  padding: 10px;
-  background-color: #009879;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.controls button:hover {
-  background-color: #007a63;
+  color: #009879;
 }
