@@ -1,35 +1,37 @@
-const fees = {
-    "K2": [170, 162, 153, 145, 136],
-    "Primary 1": [180, 171, 162, 153, 144],
-    "Primary 2": [190, 181, 171, 162, 152],
-    "Primary 3": [200, 190, 180, 170, 160],
-    "Primary 4": [210, 200, 189, 179, 168],
-    "Primary 5": [220, 209, 198, 187, 176],
-    "Primary 6": [230, 219, 207, 196, 184],
-    "Secondary 1": [240, 228, 216, 204, 192],
-    "Secondary 2": [250, 238, 225, 213, 200],
-    "Secondary 3": [280, 266, 252, 238, 224],
-    "O/N Levels": [300, 285, 270, 255, 240]
-};
+document.getElementById('calculateFees').addEventListener('click', function() {
+    // Fee structure data
+    const feeStructure = {
+        k2: { 1: 170, 2: 162, 3: 153, 4: 145, 5: 136 },
+        p1: { 1: 180, 2: 171, 3: 162, 4: 153, 5: 144 },
+        p2: { 1: 190, 2: 181, 3: 171, 4: 162, 5: 152 },
+        p3: { 1: 200, 2: 190, 3: 180, 4: 170, 5: 160 },
+        p4: { 1: 210, 2: 200, 3: 189, 4: 179, 5: 168 },
+        p5: { 1: 220, 2: 209, 3: 198, 4: 187, 5: 176 },
+        p6: { 1: 230, 2: 219, 3: 207, 4: 196, 5: 184 },
+        s1: { 1: 240, 2: 228, 3: 216, 4: 204, 5: 192 },
+        s2: { 1: 250, 2: 238, 3: 225, 4: 213, 5: 200 },
+        s3: { 1: 280, 2: 266, 3: 252, 4: 238, 5: 224 },
+        oLevels: { 1: 300, 2: 285, 3: 270, 4: 255, 5: 240 }
+    };
 
-function calculateFees() {
-    const level = document.getElementById('level').value;
-    const subjects = parseInt(document.getElementById('subjects').value);
+    let level = document.getElementById('level').value;
+    let subjects = parseInt(document.getElementById('subjects').value);
+    let paymentPlan = document.getElementById('paymentPlan').value;
 
-    if (subjects < 1 || subjects > 5) {
-        document.getElementById('result').innerText = 'Please select between 1 and 5 subjects.';
-        return;
+    // Get the base fee
+    let baseFee = feeStructure[level][subjects];
+
+    // Apply additional discount for payment plan
+    let discount = 0;
+    if (paymentPlan === 'half-yearly') {
+        discount = 0.02; // 2% discount
+    } else if (paymentPlan === 'annually') {
+        discount = 0.05; // 5% discount
     }
 
-    const baseFee = fees[level][subjects - 1];
-    const gst = 0.09;
-    const registrationFee = 30;
-    const materialsFee = 60;
-    const deposit = 50;
+    let totalFee = baseFee - (baseFee * discount);
+    let gst = 0.09 * totalFee;
+    let finalAmount = totalFee + gst;
 
-    let total = baseFee * subjects;
-    total += registrationFee + materialsFee + deposit;
-    total += total * gst;
-
-    document.getElementById('result').innerText = `Total Monthly Fee: $${total.toFixed(2)}`;
-}
+    document.getElementById('totalFees').innerText = `$${finalAmount.toFixed(2)}`;
+});
