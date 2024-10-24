@@ -71,3 +71,21 @@ function calculateFees() {
         <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
 }
+
+function calculateFees() {
+  // Get the value of whether the user is a new student
+  const isNewStudent = document.getElementById('newStudent').value;
+
+  // Assuming you have some base fee logic, like:
+  let baseFee = 1000; // Example base fee
+
+  // Check if the user is a new student and apply a discount or extra charge
+  if (isNewStudent === 'yes') {
+    // Example: Apply a discount or extra charge for new students
+    let newStudentDiscount = 0.1; // 10% discount for new students
+    baseFee -= baseFee * newStudentDiscount;
+  }
+
+  // Display the updated fee in the output paragraph
+  document.getElementById('feeOutput').innerHTML = "The total fee is: $" + baseFee;
+}
