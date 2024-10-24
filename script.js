@@ -1,67 +1,59 @@
+// Pricing data based on the fee chart
+const feeData = {
+    k2: { 1: 170, 2: 162, 3: 153, 4: 145, 5: 136 },
+    primary1: { 1: 180, 2: 171, 3: 162, 4: 153, 5: 144 },
+    primary2: { 1: 190, 2: 181, 3: 171, 4: 162, 5: 152 },
+    primary3: { 1: 200, 2: 190, 3: 180, 4: 170, 5: 160 },
+    primary4: { 1: 210, 2: 200, 3: 189, 4: 179, 5: 168 },
+    primary5: { 1: 220, 2: 209, 3: 198, 4: 187, 5: 176 },
+    primary6: { 1: 230, 2: 218, 3: 207, 4: 196, 5: 184 },
+    secondary1: { 1: 240, 2: 228, 3: 216, 4: 204, 5: 192 },
+    secondary2: { 1: 250, 2: 238, 3: 225, 4: 213, 5: 200 },
+    secondary3: { 1: 280, 2: 266, 3: 252, 4: 238, 5: 224 },
+    olevels: { 1: 300, 2: 285, 3: 270, 4: 255, 5: 240 }
+};
+
 function calculateFees() {
-  const level = document.getElementById('level').value;
-  const subjects = parseInt(document.getElementById('subjects').value);
-  const siblings = parseInt(document.getElementById('siblings').value);
-  const paymentPlan = document.getElementById('paymentPlan').value;
+    // Get values from the form
+    const level = document.getElementById('level').value;
+    const subjects = parseInt(document.getElementById('subjects').value);
+    const siblings = document.getElementById('siblings').value;
+    const paymentPlan = document.getElementById('paymentPlan').value;
 
-  const baseFeePerSubject = getBaseFee(level); // Fetch the base fee for the level
-  const baseFee = baseFeePerSubject * subjects; 
+    // Calculate base fee
+    const baseFee = feeData[level][subjects] * subjects;
 
-  const bundleDiscount = calculateBundleDiscount(subjects);
-  const siblingDiscount = calculateSiblingDiscount(siblings, baseFee);
-  const paymentPlanDiscount = calculatePaymentPlanDiscount(paymentPlan, baseFee);
+    // Apply sibling discount if applicable
+    let siblingDiscount = 0;
+    if (siblings === "yes") {
+        siblingDiscount = 0.15; // 15% sibling discount
+    }
 
-  const registrationFee = 30;
-  const materialsFee = 60;
-  const refundableDeposit = 50;
+    // Apply payment plan discount
+    let paymentDiscount = 0;
+    if (paymentPlan === "halfYearly") {
+        paymentDiscount = 0.02;
+    } else if (paymentPlan === "annually") {
+        paymentDiscount = 0.05;
+    }
 
-  let totalBeforeGST = baseFee - bundleDiscount - siblingDiscount - paymentPlanDiscount + registrationFee + materialsFee + refundableDeposit;
-  let gst = totalBeforeGST * 0.09;
-  let total = totalBeforeGST + gst;
+    // Total discount
+    const totalDiscount = siblingDiscount + paymentDiscount;
 
-  // Update the table with the breakdown
-  document.getElementById('baseFee').innerText = `$${baseFee.toFixed(2)}`;
-  document.getElementById('bundleDiscount').innerText = `$${bundleDiscount.toFixed(2)}`;
-  document.getElementById('siblingDiscount').innerText = `$${siblingDiscount.toFixed(2)}`;
-  document.getElementById('paymentPlanDiscount').innerText = `$${paymentPlanDiscount.toFixed(2)}`;
-  document.getElementById('gstAmount').innerText = `$${gst.toFixed(2)}`;
-  document.getElementById('totalFee').innerText = `$${total.toFixed(2)}`;
+    // Calculate discounted fee
+    const discountedFee = baseFee * (1 - totalDiscount);
 
-  document.getElementById('feeBreakdown').style.display = 'block';
+    // Apply GST (9%)
+    const gst = 0.09;
+    const finalFee = discountedFee * (1 + gst);
+
+    // Display result
+    document.getElementById('result').innerHTML = `
+        <h3>Fee Breakdown</h3>
+        <p>Base Fee (for ${subjects} subjects): $${baseFee.toFixed(2)}</p>
+        <p>Total Discount: ${(totalDiscount * 100).toFixed(2)}%</p>
+        <p>Discounted Fee: $${discountedFee.toFixed(2)}</p>
+        <p>GST (9%): $${(discountedFee * gst).toFixed(2)}</p>
+        <h4>Final Fee: $${finalFee.toFixed(2)}</h4>
+    `;
 }
-
-function getBaseFee(level) {
-  const fees = {
-    'K2': 200,
-    'Primary 1': 220,
-    'Primary 2': 220,
-    'Primary 3': 250,
-    'Primary 4': 250,
-    'Primary 5': 280,
-    'Primary 6': 280,
-    'Secondary 1': 320,
-    'Secondary 2': 320,
-    'Secondary 3': 350,
-    'O/N Levels': 400
-  };
-  return fees[level] || 0;
-}
-
-function calculateBundleDiscount(subjects) {
-  if (subjects > 3) {
-    return (subjects - 3) * 10;
-  }
-  return 0;
-}
-
-function calculateSiblingDiscount(siblings, baseFee) {
-  if (siblings > 0) {
-    return baseFee * 0.05;
-  }
-  return 0;
-}
-
-function calculatePaymentPlanDiscount(paymentPlan, baseFee) {
-  if (paymentPlan === 'halfYearly') {
-    return baseFee * 0.02;
-  } else if (paymentPlan === 'annually') {
