@@ -20,13 +20,37 @@ function calculateFees() {
     const siblings = document.getElementById('siblings').value;
     const paymentPlan = document.getElementById('paymentPlan').value;
 
-    // Calculate base fee
-    const baseFee = feeData[level][subjects] * subjects;
+    // Calculate base fee per subject
+    const baseFeePerSubject = feeData[level][subjects];
+    const baseFee = baseFeePerSubject * subjects;
+
+    // LMS & Materials fee (per semester)
+    const materialsFee = 60;
+
+    // Registration fee (new students only)
+    const registrationFee = 30;
+
+    // Refundable deposit
+    const depositFee = 50;
+
+    // Discounts
+    let siblingDiscount = 0;
+    let subjectDiscount = 0;
 
     // Apply sibling discount if applicable
-    let siblingDiscount = 0;
     if (siblings === "yes") {
         siblingDiscount = 0.15; // 15% sibling discount
+    }
+
+    // Apply subject-based discount
+    if (subjects === 2) {
+        subjectDiscount = 0.05; // 5% for 2 subjects
+    } else if (subjects === 3) {
+        subjectDiscount = 0.10; // 10% for 3 subjects
+    } else if (subjects === 4) {
+        subjectDiscount = 0.15; // 15% for 4 subjects
+    } else if (subjects >= 5) {
+        subjectDiscount = 0.20; // 20% for 5 or more subjects
     }
 
     // Apply payment plan discount
@@ -37,23 +61,31 @@ function calculateFees() {
         paymentDiscount = 0.05;
     }
 
-    // Total discount
-    const totalDiscount = siblingDiscount + paymentDiscount;
+    // Total discount based on siblings, subjects, and payment plan
+    const totalDiscount = 1 - (siblingDiscount + subjectDiscount + paymentDiscount);
 
     // Calculate discounted fee
-    const discountedFee = baseFee * (1 - totalDiscount);
+    const discountedFee = baseFee * totalDiscount;
 
     // Apply GST (9%)
     const gst = 0.09;
-    const finalFee = discountedFee * (1 + gst);
+    const feeWithGST = discountedFee * (1 + gst);
 
-    // Display result
+    // Final total including additional fees
+    const finalFee = feeWithGST + materialsFee + registrationFee + depositFee;
+
+    // Display detailed breakdown
     document.getElementById('result').innerHTML = `
         <h3>Fee Breakdown</h3>
-        <p>Base Fee (for ${subjects} subjects): $${baseFee.toFixed(2)}</p>
-        <p>Total Discount: ${(totalDiscount * 100).toFixed(2)}%</p>
-        <p>Discounted Fee: $${discountedFee.toFixed(2)}</p>
+        <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): $${baseFee.toFixed(2)}</p>
+        <p>Siblings Discount: ${(siblingDiscount * 100).toFixed(2)}% (${siblings === "yes" ? 'Applied' : 'Not Applied'})</p>
+        <p>Subjects Discount: ${(subjectDiscount * 100).toFixed(2)}% (${subjectDiscount > 0 ? 'Applied' : 'Not Applied'})</p>
+        <p>Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% (${paymentPlan === 'monthly' ? 'None' : paymentPlan === 'halfYearly' ? '2% for Half-Yearly' : '5% for Annually'})</p>
+        <p>Total Discounted Fee: $${discountedFee.toFixed(2)}</p>
         <p>GST (9%): $${(discountedFee * gst).toFixed(2)}</p>
-        <h4>Final Fee: $${finalFee.toFixed(2)}</h4>
+        <p>LMS & Materials Fee: $${materialsFee.toFixed(2)}</p>
+        <p>Registration Fee: $${registrationFee.toFixed(2)}</p>
+        <p>Refundable Deposit: $${depositFee.toFixed(2)}</p>
+        <h4>Final Fee (after GST and fees): $${finalFee.toFixed(2)}</h4>
     `;
 }
