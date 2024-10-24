@@ -14,13 +14,12 @@ const feeData = {
 };
 
 function calculateFees() {
-    // Get values from the form (level, subjects, siblings, payment plan)
+    // Get values from the form
     const level = document.getElementById('level').value;
     const subjects = parseInt(document.getElementById('subjects').value);
     const siblings = document.getElementById('siblings').value;
     const paymentPlan = document.getElementById('paymentPlan').value;
-
-    // Manual adjustments and remarks
+    const isNewStudent = document.getElementById('newStudent').value;
     const manualAdjustments = parseFloat(document.getElementById('manualAdjustments').value) || 0;
     const remarks = document.getElementById('remarks').value;
 
@@ -28,31 +27,22 @@ function calculateFees() {
     const baseFeePerSubject = feeData[level][subjects];
     const baseFee = baseFeePerSubject * subjects;
 
-    // Apply sibling and other discounts, same as before...
-    let siblingDiscount = 0;
-    let subjectDiscount = 0;
+    // Apply discounts
+    let siblingDiscount = siblings === "yes" ? 0.15 : 0;
+    let subjectDiscount = subjects === 2 ? 0.05 : subjects === 3 ? 0.10 : subjects === 4 ? 0.15 : subjects >= 5 ? 0.20 : 0;
+    let paymentDiscount = paymentPlan === "halfYearly" ? 0.02 : paymentPlan === "annually" ? 0.05 : 0;
+    let newStudentDiscount = isNewStudent === 'yes' ? 0.1 : 0;
 
-    if (siblings === "yes") siblingDiscount = 0.15;
-    if (subjects === 2) subjectDiscount = 0.05;
-    if (subjects === 3) subjectDiscount = 0.10;
-    if (subjects === 4) subjectDiscount = 0.15;
-    if (subjects >= 5) subjectDiscount = 0.20;
-
-    let paymentDiscount = 0;
-    if (paymentPlan === "halfYearly") paymentDiscount = 0.02;
-    if (paymentPlan === "annually") paymentDiscount = 0.05;
-
-    const totalDiscount = 1 - (siblingDiscount + subjectDiscount + paymentDiscount);
+    // Total discount and calculate discounted fee
+    const totalDiscount = 1 - (siblingDiscount + subjectDiscount + paymentDiscount + newStudentDiscount);
     const discountedFee = baseFee * totalDiscount;
 
     // Apply GST (9%)
     const gst = 0.09;
     const feeWithGST = discountedFee * (1 + gst);
 
-    // Final total including additional fees (like LMS, registration, etc.)
+    // Final total including LMS, registration, deposit
     const finalFeeBeforeAdjustment = feeWithGST + 60 + 30 + 50;
-
-    // Apply manual adjustments (additions or deductions)
     const finalFee = finalFeeBeforeAdjustment + manualAdjustments;
 
     // Display detailed breakdown
@@ -62,30 +52,4 @@ function calculateFees() {
         <p>- Sibling Discount: ${(siblingDiscount * 100).toFixed(2)}% ${siblingDiscount > 0 ? '(-$' + (baseFee * siblingDiscount).toFixed(2) + ')' : '(No discount)'}</p>
         <p>- Subjects Discount: ${(subjectDiscount * 100).toFixed(2)}% ${subjectDiscount > 0 ? '(-$' + (baseFee * subjectDiscount).toFixed(2) + ')' : '(No discount)'}</p>
         <p>- Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% ${paymentDiscount > 0 ? '(-$' + (baseFee * paymentDiscount).toFixed(2) + ')' : '(No discount)'}</p>
-        <p>Total Discounted Fee: <strong>$${discountedFee.toFixed(2)}</strong></p>
-        <p>+ GST (9%): $${(discountedFee * gst).toFixed(2)}</p>
-        <p>+ LMS & Materials Fee: $60.00</p>
-        <p>+ Registration Fee: $30.00</p>
-        <p>+ Refundable Deposit: $50.00</p>
-        ${remarks ? `<p>${remarks}: $${manualAdjustments.toFixed(2)}</p>` : ''}
-        <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
-    `;
-}
-
-function calculateFees() {
-  // Get the value of whether the user is a new student
-  const isNewStudent = document.getElementById('newStudent').value;
-
-  // Assuming you have some base fee logic, like:
-  let baseFee = 1000; // Example base fee
-
-  // Check if the user is a new student and apply a discount or extra charge
-  if (isNewStudent === 'yes') {
-    // Example: Apply a discount or extra charge for new students
-    let newStudentDiscount = 0.1; // 10% discount for new students
-    baseFee -= baseFee * newStudentDiscount;
-  }
-
-  // Display the updated fee in the output paragraph
-  document.getElementById('feeOutput').innerHTML = "The total fee is: $" + baseFee;
-}
+        <p>- New Student Discount: ${(newStudentDiscount * 100).toFixed(2)}% ${newStudentDiscount > 
