@@ -57,3 +57,11 @@ function calculateBundleDiscount(subjects) {
 function calculateSiblingDiscount(siblings, baseFee) {
   if (siblings > 0) {
     return baseFee * 0.05;
+  }
+  return 0;
+}
+
+function calculatePaymentPlanDiscount(paymentPlan, baseFee) {
+  if (paymentPlan === 'halfYearly') {
+    return baseFee * 0.02;
+  } else if (paymentPlan === 'annually') {
