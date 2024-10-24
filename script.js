@@ -14,78 +14,61 @@ const feeData = {
 };
 
 function calculateFees() {
-    // Get values from the form
+    // Get values from the form (level, subjects, siblings, payment plan)
     const level = document.getElementById('level').value;
     const subjects = parseInt(document.getElementById('subjects').value);
     const siblings = document.getElementById('siblings').value;
     const paymentPlan = document.getElementById('paymentPlan').value;
 
+    // Manual adjustments and remarks
+    const manualAdjustments = parseFloat(document.getElementById('manualAdjustments').value) || 0;
+    const remarks = document.getElementById('remarks').value;
+
     // Calculate base fee per subject
     const baseFeePerSubject = feeData[level][subjects];
     const baseFee = baseFeePerSubject * subjects;
 
-    // LMS & Materials fee (per semester)
-    const materialsFee = 60;
-
-    // Registration fee (new students only)
-    const registrationFee = 30;
-
-    // Refundable deposit
-    const depositFee = 50;
-
-    // Discounts
+    // Apply sibling and other discounts, same as before...
     let siblingDiscount = 0;
     let subjectDiscount = 0;
 
-    // Apply sibling discount if applicable
-    if (siblings === "yes") {
-        siblingDiscount = 0.15; // 15% sibling discount
-    }
+    if (siblings === "yes") siblingDiscount = 0.15;
+    if (subjects === 2) subjectDiscount = 0.05;
+    if (subjects === 3) subjectDiscount = 0.10;
+    if (subjects === 4) subjectDiscount = 0.15;
+    if (subjects >= 5) subjectDiscount = 0.20;
 
-    // Apply subject-based discount
-    if (subjects === 2) {
-        subjectDiscount = 0.05; // 5% for 2 subjects
-    } else if (subjects === 3) {
-        subjectDiscount = 0.10; // 10% for 3 subjects
-    } else if (subjects === 4) {
-        subjectDiscount = 0.15; // 15% for 4 subjects
-    } else if (subjects >= 5) {
-        subjectDiscount = 0.20; // 20% for 5 or more subjects
-    }
-
-    // Apply payment plan discount
     let paymentDiscount = 0;
-    if (paymentPlan === "halfYearly") {
-        paymentDiscount = 0.02;
-    } else if (paymentPlan === "annually") {
-        paymentDiscount = 0.05;
-    }
+    if (paymentPlan === "halfYearly") paymentDiscount = 0.02;
+    if (paymentPlan === "annually") paymentDiscount = 0.05;
 
-    // Total discount based on siblings, subjects, and payment plan
     const totalDiscount = 1 - (siblingDiscount + subjectDiscount + paymentDiscount);
-
-    // Calculate discounted fee
     const discountedFee = baseFee * totalDiscount;
 
     // Apply GST (9%)
     const gst = 0.09;
     const feeWithGST = discountedFee * (1 + gst);
 
-    // Final total including additional fees
-    const finalFee = feeWithGST + materialsFee + registrationFee + depositFee;
+    // Final total including additional fees (like LMS, registration, etc.)
+    const finalFeeBeforeAdjustment = feeWithGST + 60 + 30 + 50;
 
-    // Display detailed breakdown
+    // Apply manual adjustments (additions or deductions)
+    const finalFee = finalFeeBeforeAdjustment + manualAdjustments;
+
+    // Display detailed breakdown including manual adjustments and remarks
     document.getElementById('result').innerHTML = `
         <h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${baseFee.toFixed(2)}</strong></p>
-        <p>- Siblings Discount: ${(siblingDiscount * 100).toFixed(2)}% ${siblings === "yes" ? '(-$' + (baseFee * siblingDiscount).toFixed(2) + ')' : '(No discount)'}</p>
+        <p>- Sibling Discount: ${(siblingDiscount * 100).toFixed(2)}% ${siblingDiscount > 0 ? '(-$' + (baseFee * siblingDiscount).toFixed(2) + ')' : '(No discount)'}</p>
         <p>- Subjects Discount: ${(subjectDiscount * 100).toFixed(2)}% ${subjectDiscount > 0 ? '(-$' + (baseFee * subjectDiscount).toFixed(2) + ')' : '(No discount)'}</p>
-        <p>- Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% ${paymentPlan === 'monthly' ? '(No discount)' : '(−$' + (baseFee * paymentDiscount).toFixed(2) + ')'}</p>
+        <p>- Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% ${paymentDiscount > 0 ? '(-$' + (baseFee * paymentDiscount).toFixed(2) + ')' : '(No discount)'}</p>
         <p>Total Discounted Fee: <strong>$${discountedFee.toFixed(2)}</strong></p>
         <p>+ GST (9%): $${(discountedFee * gst).toFixed(2)}</p>
-        <p>+ LMS & Materials Fee: $${materialsFee.toFixed(2)}</p>
-        <p>+ Registration Fee: $${registrationFee.toFixed(2)}</p>
-        <p>+ Refundable Deposit: $${depositFee.toFixed(2)}</p>
+        <p>+ LMS & Materials Fee: $60.00</p>
+        <p>+ Registration Fee: $30.00</p>
+        <p>+ Refundable Deposit: $50.00</p>
+        <p>${manualAdjustments >= 0 ? '+ Additional Fee: ' : '- Deduction: '} $${Math.abs(manualAdjustments).toFixed(2)}</p>
         <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
+        ${remarks ? `<p><strong>Remarks:</strong> ${remarks}</p>` : ''}
     `;
 }
