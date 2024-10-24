@@ -77,15 +77,15 @@ function calculateFees() {
     // Display detailed breakdown
     document.getElementById('result').innerHTML = `
         <h3>Fee Breakdown</h3>
-        <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): $${baseFee.toFixed(2)}</p>
-        <p>Siblings Discount: ${(siblingDiscount * 100).toFixed(2)}% (${siblings === "yes" ? 'Applied' : 'Not Applied'})</p>
-        <p>Subjects Discount: ${(subjectDiscount * 100).toFixed(2)}% (${subjectDiscount > 0 ? 'Applied' : 'Not Applied'})</p>
-        <p>Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% (${paymentPlan === 'monthly' ? 'None' : paymentPlan === 'halfYearly' ? '2% for Half-Yearly' : '5% for Annually'})</p>
-        <p>Total Discounted Fee: $${discountedFee.toFixed(2)}</p>
-        <p>GST (9%): $${(discountedFee * gst).toFixed(2)}</p>
-        <p>LMS & Materials Fee: $${materialsFee.toFixed(2)}</p>
-        <p>Registration Fee: $${registrationFee.toFixed(2)}</p>
-        <p>Refundable Deposit: $${depositFee.toFixed(2)}</p>
-        <h4>Final Fee (after GST and fees): $${finalFee.toFixed(2)}</h4>
+        <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${baseFee.toFixed(2)}</strong></p>
+        <p>- Siblings Discount: ${(siblingDiscount * 100).toFixed(2)}% ${siblings === "yes" ? '(-$' + (baseFee * siblingDiscount).toFixed(2) + ')' : '(No discount)'}</p>
+        <p>- Subjects Discount: ${(subjectDiscount * 100).toFixed(2)}% ${subjectDiscount > 0 ? '(-$' + (baseFee * subjectDiscount).toFixed(2) + ')' : '(No discount)'}</p>
+        <p>- Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% ${paymentPlan === 'monthly' ? '(No discount)' : '(−$' + (baseFee * paymentDiscount).toFixed(2) + ')'}</p>
+        <p>Total Discounted Fee: <strong>$${discountedFee.toFixed(2)}</strong></p>
+        <p>+ GST (9%): $${(discountedFee * gst).toFixed(2)}</p>
+        <p>+ LMS & Materials Fee: $${materialsFee.toFixed(2)}</p>
+        <p>+ Registration Fee: $${registrationFee.toFixed(2)}</p>
+        <p>+ Refundable Deposit: $${depositFee.toFixed(2)}</p>
+        <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
 }
