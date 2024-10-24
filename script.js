@@ -55,7 +55,7 @@ function calculateFees() {
     // Apply manual adjustments (additions or deductions)
     const finalFee = finalFeeBeforeAdjustment + manualAdjustments;
 
-    // Display detailed breakdown including manual adjustments and remarks
+    // Display detailed breakdown including remarks in place of additional fee/deduction
     document.getElementById('result').innerHTML = `
         <h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${baseFee.toFixed(2)}</strong></p>
@@ -67,8 +67,8 @@ function calculateFees() {
         <p>+ LMS & Materials Fee: $60.00</p>
         <p>+ Registration Fee: $30.00</p>
         <p>+ Refundable Deposit: $50.00</p>
-        <p>${manualAdjustments >= 0 ? '+ Additional Fee: ' : '- Deduction: '} $${Math.abs(manualAdjustments).toFixed(2)}</p>
+        ${remarks ? `<p>${remarks}: $${manualAdjustments.toFixed(2)}</p>` : ''}
         <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
-        ${remarks ? `<p><strong>Remarks:</strong> ${remarks}</p>` : ''}
     `;
 }
+
