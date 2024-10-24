@@ -55,7 +55,7 @@ function calculateFees() {
     // Apply manual adjustments (additions or deductions)
     const finalFee = finalFeeBeforeAdjustment + manualAdjustments;
 
-    // Display detailed breakdown including remarks in place of additional fee/deduction
+    // Display detailed breakdown
     document.getElementById('result').innerHTML = `
         <h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${baseFee.toFixed(2)}</strong></p>
@@ -71,4 +71,3 @@ function calculateFees() {
         <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
 }
-
