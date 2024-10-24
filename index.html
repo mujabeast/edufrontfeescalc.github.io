@@ -3,100 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edufront Fees Calculator</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Edufront Fees Calculator</h1>
-        
-        <!-- Fee Calculator Form -->
-        <form id="feesForm">
-            <label for="level">Select Level:</label>
-            <select id="level">
-                <option value="k2">K2</option>
-                <option value="primary1">Primary 1</option>
-                <option value="primary2">Primary 2</option>
-                <option value="primary3">Primary 3</option>
-                <option value="primary4">Primary 4</option>
-                <option value="primary5">Primary 5</option>
-                <option value="primary6">Primary 6</option>
-                <option value="secondary1">Secondary 1</option>
-                <option value="secondary2">Secondary 2</option>
-                <option value="secondary3">Secondary 3</option>
-                <option value="olevels">O/N Levels</option>
-            </select>
-
-            <label for="subjects">Number of Subjects:</label>
-            <input type="number" id="subjects" min="1" max="5" value="1">
-
-            <label for="siblings">Registering with Siblings?</label>
-            <select id="siblings">
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-
-            <label for="paymentPlan">Payment Plan:</label>
-            <select id="paymentPlan">
-                <option value="monthly">Monthly</option>
-                <option value="halfYearly">Half-Yearly (2% discount)</option>
-                <option value="annually">Annually (5% discount)</option>
-            </select>
-
-            <button type="button" onclick="calculateFees()">Calculate</button>
-        </form>
-
-        <!-- Display the calculation result -->
-        <div id="result"></div>
-
-        <!-- Footer for extra info -->
-        <footer>
-            Powered by <a href="https://edufront.com/" target="_blank">Edufront</a>
-        </footer>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
-
-<form id="feesForm">
-    <!-- Existing fields for level, subjects, etc. -->
-
-    <!-- New fields for manual fee adjustment and remarks -->
-    <label for="manualAdjustments">Manual Adjustments (Add or Deduct):</label>
-    <input type="number" id="manualAdjustments" placeholder="Enter amount to add or deduct">
-
-    <label for="remarks">Remarks:</label>
-    <input type="text" id="remarks" placeholder="Enter any notes or remarks">
-
-    <button type="button" onclick="calculateFees()">Calculate</button>
-</form>
-
-<!-- Display the calculation result -->
-<div id="result"></div>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fee Calculator</title>
+    <title>Complete Fee Calculator</title>
+    <style>
+        /* Basic styling for the fee calculator box */
+        .calculator-box {
+            width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+        .calculator-box label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .calculator-box select,
+        .calculator-box button,
+        .calculator-box input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .calculator-box button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .calculator-box button:hover {
+            background-color: #45a049;
+        }
+        .calculator-box p {
+            margin-top: 15px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
 
-<form id="feeCalculator">
-  <label for="newStudent">Are you a new student?</label>
-  <select id="newStudent" name="newStudent">
-    <option value="yes">Yes</option>
-    <option value="no">No</option>
-  </select>
+<div class="calculator-box">
+    <form id="feeCalculator">
+        <!-- New Student Section -->
+        <label for="newStudent">Are you a new student?</label>
+        <select id="newStudent" name="newStudent">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
 
-  <!-- Other form fields like courses, fees, discounts, etc. -->
+        <!-- Course Fee Section -->
+        <label for="courseFee">Base Course Fee:</label>
+        <input type="number" id="courseFee" name="courseFee" placeholder="Enter base course fee" required>
 
-  <button type="button" onclick="calculateFees()">Calculate Fees</button>
-</form>
+        <!-- Number of Subjects Section -->
+        <label for="subjects">Number of Subjects:</label>
+        <input type="number" id="subjects" name="subjects" placeholder="Enter number of subjects" required>
 
-<p id="feeOutput"></p>
+        <!-- Discount Section -->
+        <label for="discount">Discount (%):</label>
+        <input type="number" id="discount" name="discount" placeholder="Enter discount percentage" value="0" required>
+
+        <button type="button" onclick="calculateFees()">Calculate Fees</button>
+    </form>
+
+    <p id="feeOutput"></p>
+</div>
 
 <!-- Link to external JavaScript file -->
 <script src="calculator.js"></script>
