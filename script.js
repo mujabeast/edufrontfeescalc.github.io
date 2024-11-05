@@ -13,14 +13,38 @@ const feeData = {
     olevels: { 1: 300, 2: 285, 3: 270, 4: 255, 5: 240 }
 };
 
+// Function to add a new adjustment field
+document.addEventListener("DOMContentLoaded", function() {
+    const adjustmentsContainer = document.getElementById('adjustmentsContainer');
+    const addAdjustmentButton = document.getElementById('addAdjustment');
+
+    addAdjustmentButton.addEventListener('click', function() {
+        const adjustmentDiv = document.createElement('div');
+        adjustmentDiv.classList.add('adjustment');
+
+        const amountInput = document.createElement('input');
+        amountInput.type = 'number';
+        amountInput.placeholder = 'Amount';
+        amountInput.classList.add('adjustmentAmount');
+
+        const remarksInput = document.createElement('input');
+        remarksInput.type = 'text';
+        remarksInput.placeholder = 'Remarks';
+        remarksInput.classList.add('adjustmentRemarks');
+
+        adjustmentDiv.appendChild(amountInput);
+        adjustmentDiv.appendChild(remarksInput);
+        adjustmentsContainer.appendChild(adjustmentDiv);
+    });
+});
+
+// Function to calculate fees
 function calculateFees() {
     // Get values from the form
     const level = document.getElementById('level').value;
     const subjects = parseInt(document.getElementById('subjects').value);
     const siblings = document.getElementById('siblings').value;
     const paymentPlan = document.getElementById('paymentPlan').value;
-    const manualAdjustments = parseFloat(document.getElementById('manualAdjustments').value) || 0;
-    const remarks = document.getElementById('remarks').value;
 
     // Calculate base fee per subject
     const baseFeePerSubject = feeData[level][subjects];
@@ -76,8 +100,21 @@ function calculateFees() {
     // Final total including additional fees
     const finalFeeBeforeAdjustment = feeWithGST + materialsFee + registrationFee + depositFee;
 
-    // Apply manual adjustments (additions or deductions)
-    const finalFee = finalFeeBeforeAdjustment + manualAdjustments;
+    // Calculate total manual adjustments
+    let totalAdjustments = 0;
+    let adjustmentDetails = '';
+    const adjustmentAmounts = document.querySelectorAll('.adjustmentAmount');
+    const adjustmentRemarks = document.querySelectorAll('.adjustmentRemarks');
+
+    adjustmentAmounts.forEach((amountInput, index) => {
+        const amount = parseFloat(amountInput.value) || 0;
+        totalAdjustments += amount;
+        const remark = adjustmentRemarks[index].value || 'Adjustment';
+        adjustmentDetails += `<p>${remark}: $${amount.toFixed(2)}</p>`;
+    });
+
+    // Calculate final fee after adjustments
+    const finalFee = finalFeeBeforeAdjustment + totalAdjustments;
 
     // Display detailed breakdown
     document.getElementById('result').innerHTML = `
@@ -91,12 +128,7 @@ function calculateFees() {
         <p>+ LMS & Materials Fee: $${materialsFee.toFixed(2)}</p>
         <p>+ Registration Fee: $${registrationFee.toFixed(2)}</p>
         <p>+ Refundable Deposit: $${depositFee.toFixed(2)}</p>
-        ${remarks ? `<p>${remarks}: $${manualAdjustments.toFixed(2)}</p>` : ''}
+        ${adjustmentDetails}
         <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
 }
-
-// Ensure the DOM is fully loaded before adding the event listener
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelector("button").addEventListener("click", calculateFees);
-});
