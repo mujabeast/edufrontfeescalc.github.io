@@ -95,3 +95,8 @@ function calculateFees() {
         <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
 }
+
+// Ensure the DOM is fully loaded before adding the event listener
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelector("button").addEventListener("click", calculateFees);
+});
