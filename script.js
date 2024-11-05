@@ -19,6 +19,8 @@ function calculateFees() {
     const subjects = parseInt(document.getElementById('subjects').value);
     const siblings = document.getElementById('siblings').value;
     const paymentPlan = document.getElementById('paymentPlan').value;
+    const manualAdjustments = parseFloat(document.getElementById('manualAdjustments').value) || 0;
+    const remarks = document.getElementById('remarks').value;
 
     // Calculate base fee per subject
     const baseFeePerSubject = feeData[level][subjects];
@@ -72,20 +74,24 @@ function calculateFees() {
     const feeWithGST = discountedFee * (1 + gst);
 
     // Final total including additional fees
-    const finalFee = feeWithGST + materialsFee + registrationFee + depositFee;
+    const finalFeeBeforeAdjustment = feeWithGST + materialsFee + registrationFee + depositFee;
+
+    // Apply manual adjustments (additions or deductions)
+    const finalFee = finalFeeBeforeAdjustment + manualAdjustments;
 
     // Display detailed breakdown
     document.getElementById('result').innerHTML = `
         <h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${baseFee.toFixed(2)}</strong></p>
-        <p>- Siblings Discount: ${(siblingDiscount * 100).toFixed(2)}% ${siblings === "yes" ? '(-$' + (baseFee * siblingDiscount).toFixed(2) + ')' : '(No discount)'}</p>
+        <p>- Sibling Discount: ${(siblingDiscount * 100).toFixed(2)}% ${siblingDiscount > 0 ? '(-$' + (baseFee * siblingDiscount).toFixed(2) + ')' : '(No discount)'}</p>
         <p>- Subjects Discount: ${(subjectDiscount * 100).toFixed(2)}% ${subjectDiscount > 0 ? '(-$' + (baseFee * subjectDiscount).toFixed(2) + ')' : '(No discount)'}</p>
-        <p>- Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% ${paymentPlan === 'monthly' ? '(No discount)' : '(−$' + (baseFee * paymentDiscount).toFixed(2) + ')'}</p>
+        <p>- Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% ${paymentDiscount > 0 ? '(-$' + (baseFee * paymentDiscount).toFixed(2) + ')' : '(No discount)'}</p>
         <p>Total Discounted Fee: <strong>$${discountedFee.toFixed(2)}</strong></p>
         <p>+ GST (9%): $${(discountedFee * gst).toFixed(2)}</p>
         <p>+ LMS & Materials Fee: $${materialsFee.toFixed(2)}</p>
         <p>+ Registration Fee: $${registrationFee.toFixed(2)}</p>
         <p>+ Refundable Deposit: $${depositFee.toFixed(2)}</p>
+        ${remarks ? `<p>${remarks}: $${manualAdjustments.toFixed(2)}</p>` : ''}
         <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
 }
