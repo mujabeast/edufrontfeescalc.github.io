@@ -13,50 +13,24 @@ const feeData = {
     olevels: { 1: 300, 2: 285, 3: 270, 4: 255, 5: 240 }
 };
 
-// Function to add a new adjustment field
-document.addEventListener("DOMContentLoaded", function() {
-    const adjustmentsContainer = document.getElementById('adjustmentsContainer');
-    const addAdjustmentButton = document.getElementById('addAdjustment');
-
-    addAdjustmentButton.addEventListener('click', function() {
-        const adjustmentDiv = document.createElement('div');
-        adjustmentDiv.classList.add('adjustment');
-
-        const amountInput = document.createElement('input');
-        amountInput.type = 'number';
-        amountInput.placeholder = 'Amount';
-        amountInput.classList.add('adjustmentAmount');
-
-        const remarksInput = document.createElement('input');
-        remarksInput.type = 'text';
-        remarksInput.placeholder = 'Remarks';
-        remarksInput.classList.add('adjustmentRemarks');
-
-        adjustmentDiv.appendChild(amountInput);
-        adjustmentDiv.appendChild(remarksInput);
-        adjustmentsContainer.appendChild(adjustmentDiv);
-    });
-});
-
-// Function to calculate fees
 function calculateFees() {
     // Get values from the form
     const level = document.getElementById('level').value;
     const subjects = parseInt(document.getElementById('subjects').value);
     const siblings = document.getElementById('siblings').value;
     const paymentPlan = document.getElementById('paymentPlan').value;
+    const isNewStudent = document.getElementById('newStudent').value === "yes";
+    const isLMSFeeChecked = document.getElementById('lmsFee').value === "yes";
 
     // Calculate base fee per subject
     const baseFeePerSubject = feeData[level][subjects];
     const baseFee = baseFeePerSubject * subjects;
 
-    // LMS & Materials fee (per semester)
-    const materialsFee = 60;
+    // Fees for new students and LMS (only if dropdowns are set to "yes")
+    const registrationFee = isNewStudent ? 30 : 0;
+    const materialsFee = isLMSFeeChecked ? 60 : 0;
 
-    // Registration fee (new students only)
-    const registrationFee = 30;
-
-    // Refundable deposit
+    // Refundable deposit (always included)
     const depositFee = 50;
 
     // Discounts
@@ -125,8 +99,8 @@ function calculateFees() {
         <p>- Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% ${paymentDiscount > 0 ? '(-$' + (baseFee * paymentDiscount).toFixed(2) + ')' : '(No discount)'}</p>
         <p>Total Discounted Fee: <strong>$${discountedFee.toFixed(2)}</strong></p>
         <p>+ GST (9%): $${(discountedFee * gst).toFixed(2)}</p>
-        <p>+ LMS & Materials Fee: $${materialsFee.toFixed(2)}</p>
-        <p>+ Registration Fee: $${registrationFee.toFixed(2)}</p>
+        <p>${isNewStudent ? '+ Registration Fee: $30.00' : ''}</p>
+        <p>${isLMSFeeChecked ? '+ LMS & Materials Fee: $60.00' : ''}</p>
         <p>+ Refundable Deposit: $${depositFee.toFixed(2)}</p>
         ${adjustmentDetails}
         <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
