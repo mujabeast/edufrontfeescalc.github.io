@@ -43,11 +43,9 @@
                 <option value="annually">Annually (5% discount)</option>
             </select>
 
-            <label for="manualAdjustments">Manual Adjustments (Add or Deduct):</label>
-            <input type="number" id="manualAdjustments" placeholder="Enter amount to add or deduct">
-
-            <label for="remarks">Remarks:</label>
-            <input type="text" id="remarks" placeholder="Enter remarks for adjustment">
+            <!-- Container for multiple manual adjustments -->
+            <div id="adjustmentsContainer"></div>
+            <button type="button" id="addAdjustment">Add Adjustment</button>
 
             <button type="button" onclick="calculateFees()">Calculate</button>
         </form>
