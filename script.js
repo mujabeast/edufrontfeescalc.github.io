@@ -1,4 +1,4 @@
-\// Pricing data based on the fee chart
+// Pricing data based on the fee chart
 const feeData = {
     k2: { 1: 170, 2: 162, 3: 153, 4: 145, 5: 136 },
     primary1: { 1: 180, 2: 171, 3: 162, 4: 153, 5: 144 },
