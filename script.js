@@ -13,6 +13,37 @@ const feeData = {
     olevels: { 1: 300, 2: 285, 3: 270, 4: 255, 5: 240 }
 };
 
+// Function to add a new adjustment field
+document.addEventListener("DOMContentLoaded", function() {
+    const adjustmentsContainer = document.getElementById('adjustmentsContainer');
+    const addAdjustmentButton = document.getElementById('addAdjustment');
+
+    addAdjustmentButton.addEventListener('click', function() {
+        // Create a new div for the adjustment inputs
+        const adjustmentDiv = document.createElement('div');
+        adjustmentDiv.classList.add('adjustment');
+
+        // Create input for amount
+        const amountInput = document.createElement('input');
+        amountInput.type = 'number';
+        amountInput.placeholder = 'Amount';
+        amountInput.classList.add('adjustmentAmount');
+
+        // Create input for remarks
+        const remarksInput = document.createElement('input');
+        remarksInput.type = 'text';
+        remarksInput.placeholder = 'Remarks';
+        remarksInput.classList.add('adjustmentRemarks');
+
+        // Append inputs to the adjustment div
+        adjustmentDiv.appendChild(amountInput);
+        adjustmentDiv.appendChild(remarksInput);
+
+        // Append the adjustment div to the container
+        adjustmentsContainer.appendChild(adjustmentDiv);
+    });
+});
+
 function calculateFees() {
     // Get values from the form
     const level = document.getElementById('level').value;
