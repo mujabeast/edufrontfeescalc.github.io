@@ -59,10 +59,12 @@ function calculateFees() {
 
     // Fees for new students and LMS (only if dropdowns are set to "yes")
     const registrationFee = isNewStudent ? 30 : 0;
-    const materialsFee = isLMSFeeChecked ? 60 : 0;
+    const materialsFeePerSubject = 60;
+    const totalMaterialsFee = isLMSFeeChecked ? materialsFeePerSubject * subjects : 0;
 
-    // Refundable deposit (always included)
-    const depositFee = 50;
+    // Refundable deposit per subject (not subject to GST)
+    const depositPerSubject = 50;
+    const totalDepositFee = depositPerSubject * subjects;
 
     // Discounts
     let siblingDiscount = 0;
@@ -98,12 +100,12 @@ function calculateFees() {
     // Calculate discounted fee
     const discountedFee = baseFee * totalDiscount;
 
-    // Apply GST (9%)
+    // Apply GST (9%) to fees that are subject to it
     const gst = 0.09;
-    const feeWithGST = discountedFee * (1 + gst);
+    const feeWithGST = (discountedFee + totalMaterialsFee + registrationFee) * (1 + gst);
 
-    // Final total including additional fees
-    const finalFeeBeforeAdjustment = feeWithGST + materialsFee + registrationFee + depositFee;
+    // Final total including additional fees but excluding deposit from GST
+    const finalFeeBeforeAdjustment = feeWithGST;
 
     // Calculate total manual adjustments
     let totalAdjustments = 0;
@@ -118,8 +120,8 @@ function calculateFees() {
         adjustmentDetails += `<p>${remark}: $${amount.toFixed(2)}</p>`;
     });
 
-    // Calculate final fee after adjustments
-    const finalFee = finalFeeBeforeAdjustment + totalAdjustments;
+    // Calculate final fee after adjustments, adding the deposit separately (not subject to GST)
+    const finalFee = finalFeeBeforeAdjustment + totalAdjustments + totalDepositFee;
 
     // Display detailed breakdown
     document.getElementById('result').innerHTML = `
@@ -129,10 +131,10 @@ function calculateFees() {
         <p>- Subjects Discount: ${(subjectDiscount * 100).toFixed(2)}% ${subjectDiscount > 0 ? '(-$' + (baseFee * subjectDiscount).toFixed(2) + ')' : '(No discount)'}</p>
         <p>- Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% ${paymentDiscount > 0 ? '(-$' + (baseFee * paymentDiscount).toFixed(2) + ')' : '(No discount)'}</p>
         <p>Total Discounted Fee: <strong>$${discountedFee.toFixed(2)}</strong></p>
-        <p>+ GST (9%): $${(discountedFee * gst).toFixed(2)}</p>
-        <p>${isNewStudent ? '+ Registration Fee: $30.00' : ''}</p>
-        <p>${isLMSFeeChecked ? '+ LMS & Materials Fee: $60.00' : ''}</p>
-        <p>+ Refundable Deposit: $${depositFee.toFixed(2)}</p>
+        <p>+ LMS & Materials Fee ($60 per subject for ${subjects} subjects): $${totalMaterialsFee.toFixed(2)}</p>
+        <p>+ Registration Fee: $${registrationFee.toFixed(2)}</p>
+        <p>+ GST (9% on total): $${((discountedFee + totalMaterialsFee + registrationFee) * gst).toFixed(2)}</p>
+        <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): $${totalDepositFee.toFixed(2)}</p>
         ${adjustmentDetails}
         <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
