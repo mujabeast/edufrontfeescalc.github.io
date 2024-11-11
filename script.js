@@ -57,6 +57,22 @@ function calculateFees() {
     const baseFeePerSubject = feeData[level][subjects];
     const baseFee = baseFeePerSubject * subjects;
 
+    // Calculate total manual adjustments (only applied to base fee)
+    let totalAdjustments = 0;
+    let adjustmentDetails = '';
+    const adjustmentAmounts = document.querySelectorAll('.adjustmentAmount');
+    const adjustmentRemarks = document.querySelectorAll('.adjustmentRemarks');
+
+    adjustmentAmounts.forEach((amountInput, index) => {
+        const amount = parseFloat(amountInput.value) || 0;
+        totalAdjustments += amount;
+        const remark = adjustmentRemarks[index].value || 'Adjustment';
+        adjustmentDetails += `<p>${remark}: $${amount.toFixed(2)}</p>`;
+    });
+
+    // Apply adjustments to base fee
+    const adjustedBaseFee = baseFee + totalAdjustments;
+
     // Fees for new students and LMS (only if dropdowns are set to "yes")
     const registrationFee = isNewStudent ? 30 : 0;
     const materialsFeePerSubject = 60;
@@ -97,45 +113,30 @@ function calculateFees() {
     // Total discount based on siblings, subjects, and payment plan
     const totalDiscount = 1 - (siblingDiscount + subjectDiscount + paymentDiscount);
 
-    // Calculate discounted fee
-    const discountedFee = baseFee * totalDiscount;
+    // Calculate discounted fee after adjustments
+    const discountedFee = adjustedBaseFee * totalDiscount;
 
     // Apply GST (9%) to fees that are subject to it
     const gst = 0.09;
     const feeWithGST = (discountedFee + totalMaterialsFee + registrationFee) * (1 + gst);
 
-    // Final total including additional fees but excluding deposit from GST
-    const finalFeeBeforeAdjustment = feeWithGST;
-
-    // Calculate total manual adjustments
-    let totalAdjustments = 0;
-    let adjustmentDetails = '';
-    const adjustmentAmounts = document.querySelectorAll('.adjustmentAmount');
-    const adjustmentRemarks = document.querySelectorAll('.adjustmentRemarks');
-
-    adjustmentAmounts.forEach((amountInput, index) => {
-        const amount = parseFloat(amountInput.value) || 0;
-        totalAdjustments += amount;
-        const remark = adjustmentRemarks[index].value || 'Adjustment';
-        adjustmentDetails += `<p>${remark}: $${amount.toFixed(2)}</p>`;
-    });
-
-    // Calculate final fee after adjustments, adding the deposit separately (not subject to GST)
-    const finalFee = finalFeeBeforeAdjustment + totalAdjustments + totalDepositFee;
+    // Final total excluding deposit (not subject to GST)
+    const finalFee = feeWithGST + totalDepositFee;
 
     // Display detailed breakdown
     document.getElementById('result').innerHTML = `
         <h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${baseFee.toFixed(2)}</strong></p>
-        <p>- Sibling Discount: ${(siblingDiscount * 100).toFixed(2)}% ${siblingDiscount > 0 ? '(-$' + (baseFee * siblingDiscount).toFixed(2) + ')' : '(No discount)'}</p>
-        <p>- Subjects Discount: ${(subjectDiscount * 100).toFixed(2)}% ${subjectDiscount > 0 ? '(-$' + (baseFee * subjectDiscount).toFixed(2) + ')' : '(No discount)'}</p>
-        <p>- Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% ${paymentDiscount > 0 ? '(-$' + (baseFee * paymentDiscount).toFixed(2) + ')' : '(No discount)'}</p>
+        ${adjustmentDetails}
+        <p>Adjusted Base Fee (after adjustments): <strong>$${adjustedBaseFee.toFixed(2)}</strong></p>
+        <p>- Sibling Discount: ${(siblingDiscount * 100).toFixed(2)}% ${siblingDiscount > 0 ? '(-$' + (adjustedBaseFee * siblingDiscount).toFixed(2) + ')' : '(No discount)'}</p>
+        <p>- Subjects Discount: ${(subjectDiscount * 100).toFixed(2)}% ${subjectDiscount > 0 ? '(-$' + (adjustedBaseFee * subjectDiscount).toFixed(2) + ')' : '(No discount)'}</p>
+        <p>- Payment Plan Discount: ${(paymentDiscount * 100).toFixed(2)}% ${paymentDiscount > 0 ? '(-$' + (adjustedBaseFee * paymentDiscount).toFixed(2) + ')' : '(No discount)'}</p>
         <p>Total Discounted Fee: <strong>$${discountedFee.toFixed(2)}</strong></p>
         <p>+ LMS & Materials Fee ($60 per subject for ${subjects} subjects): $${totalMaterialsFee.toFixed(2)}</p>
         <p>+ Registration Fee: $${registrationFee.toFixed(2)}</p>
         <p>+ GST (9% on total): $${((discountedFee + totalMaterialsFee + registrationFee) * gst).toFixed(2)}</p>
         <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): $${totalDepositFee.toFixed(2)}</p>
-        ${adjustmentDetails}
         <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
 }
