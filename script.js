@@ -13,18 +13,21 @@ const feeData = {
     olevels: { 1: 300, 2: 285, 3: 270, 4: 255, 5: 240 }
 };
 
-// Sibling discount rates based on total programmes
-const siblingDiscountRates = {
-    1: 0.05, // 1-3 total programmes
-    2: 0.10, // 4-6 total programmes
-    3: 0.15  // 7+ total programmes
+// Discount rates based on total programmes
+const discountRates = {
+    2: 0.05,  // 2 subjects: 5%
+    3: 0.10,  // 3 subjects: 10%
+    4: 0.15,  // 4 subjects: 15%
+    5: 0.20   // 5 or more subjects: 20%
 };
 
-// Function to calculate sibling discount based on total programmes
-function getSiblingDiscountRate(totalProgrammes) {
-    if (totalProgrammes <= 3) return siblingDiscountRates[1];
-    if (totalProgrammes <= 6) return siblingDiscountRates[2];
-    return siblingDiscountRates[3];
+// Function to calculate the discount rate based on total subjects
+function getDiscountRate(totalSubjects) {
+    if (totalSubjects >= 5) return discountRates[5];
+    if (totalSubjects >= 4) return discountRates[4];
+    if (totalSubjects >= 3) return discountRates[3];
+    if (totalSubjects >= 2) return discountRates[2];
+    return 0;
 }
 
 // Function to add a new adjustment field
@@ -57,10 +60,11 @@ function calculateFees() {
     const level = document.getElementById('level').value;
     const subjects = parseInt(document.getElementById('subjects').value);
     const paymentPlan = document.getElementById('paymentPlan').value;
-    const siblingProgrammes = parseInt(document.getElementById('siblingProgrammes').value) || 0;
+    const siblingSubjects = parseInt(document.getElementById('siblingSubjects').value) || 0;
     const isNewStudent = document.getElementById('newStudent').value === "yes";
     const isLMSFeeChecked = document.getElementById('lmsFee').value === "yes";
 
+    // Base Fee
     const baseFeePerSubject = feeData[level][subjects];
     const baseFee = baseFeePerSubject * subjects;
 
@@ -72,18 +76,20 @@ function calculateFees() {
     const depositPerSubject = 50;
     const totalDepositFee = depositPerSubject * subjects;
 
-    // Sibling discount rate
-    const siblingDiscountRate = getSiblingDiscountRate(siblingProgrammes);
+    // Total discount rate (max of sibling discount or individual subject discount)
+    const siblingDiscountRate = getDiscountRate(siblingSubjects);
+    const individualDiscountRate = getDiscountRate(subjects);
+    const totalDiscountRate = Math.max(siblingDiscountRate, individualDiscountRate);
+
+    // Total discount
+    const discount = baseFee * totalDiscountRate;
 
     // Payment plan discount rate
     let paymentDiscountRate = 0;
     if (paymentPlan === "halfYearly") paymentDiscountRate = 0.02;
     if (paymentPlan === "annually") paymentDiscountRate = 0.05;
 
-    // Discounts
-    const siblingDiscount = siblingDiscountRate * baseFee;
-    const paymentDiscount = paymentDiscountRate * baseFee;
-    const totalDiscount = siblingDiscount + paymentDiscount;
+    const paymentDiscount = baseFee * paymentDiscountRate;
 
     // Adjustments
     let totalAdjustments = 0;
@@ -100,7 +106,7 @@ function calculateFees() {
     const adjustedFee = baseFee + totalAdjustments;
 
     // Subtotal before GST
-    const subtotalBeforeGST = adjustedFee - totalDiscount + totalMaterialsFee;
+    const subtotalBeforeGST = adjustedFee - discount - paymentDiscount + totalMaterialsFee;
 
     // Apply GST at the very end (exclude deposit from GST)
     const gstRate = 0.09;
@@ -116,9 +122,9 @@ function calculateFees() {
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${baseFee.toFixed(2)}</strong></p>
         ${adjustmentDetails}
         <p>Adjusted Base Fee: <strong>$${adjustedFee.toFixed(2)}</strong></p>
-        <p>- Sibling Discount (${(siblingDiscountRate * 100).toFixed(0)}%): <strong>-$${siblingDiscount.toFixed(2)}</strong></p>
+        <p>- Sibling/Subject Discount (${(totalDiscountRate * 100).toFixed(0)}%): <strong>-$${discount.toFixed(2)}</strong></p>
         <p>- Payment Plan Discount (${(paymentDiscountRate * 100).toFixed(0)}%): <strong>-$${paymentDiscount.toFixed(2)}</strong></p>
-        <p>Total Discount: <strong>-$${totalDiscount.toFixed(2)}</strong></p>
+        <p>Total Discount: <strong>-$${(discount + paymentDiscount).toFixed(2)}</strong></p>
         <p>+ LMS & Materials Fee ($60 per subject for ${subjects} subjects): <strong>$${totalMaterialsFee.toFixed(2)}</strong></p>
         <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
