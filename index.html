@@ -12,6 +12,7 @@
         
         <!-- Fee Calculator Form -->
         <form id="feesForm">
+            <!-- Level Selection -->
             <label for="level">Select Level:</label>
             <select id="level">
                 <option value="k2">K2</option>
@@ -27,15 +28,15 @@
                 <option value="olevels">O/N Levels</option>
             </select>
 
+            <!-- Number of Subjects -->
             <label for="subjects">Number of Subjects:</label>
             <input type="number" id="subjects" min="1" max="5" value="1">
 
-            <label for="siblings">Registering with Siblings?</label>
-            <select id="siblings">
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
+            <!-- Total Subjects for All Siblings -->
+            <label for="siblingSubjects">Total Subjects Across All Siblings:</label>
+            <input type="number" id="siblingSubjects" min="0" placeholder="Enter total sibling subjects">
 
+            <!-- Payment Plan -->
             <label for="paymentPlan">Payment Plan:</label>
             <select id="paymentPlan">
                 <option value="monthly">Monthly</option>
@@ -43,33 +44,33 @@
                 <option value="annually">Annually (5% discount)</option>
             </select>
 
-            <!-- New Student and LMS Fee as dropdowns -->
+            <!-- New Student Fee -->
             <label for="newStudent">Is this a New Student?</label>
             <select id="newStudent">
                 <option value="no">No</option>
                 <option value="yes">Yes</option>
             </select>
 
+            <!-- LMS Fee -->
             <label for="lmsFee">LMS & Materials Fee Required?</label>
             <select id="lmsFee">
                 <option value="no">No</option>
                 <option value="yes">Yes</option>
             </select>
 
-            <!-- Header for the Adjustments Section -->
+            <!-- Adjustments Section -->
             <h2>Adjustments</h2>
-
-            <!-- Container for multiple manual adjustments -->
             <div id="adjustmentsContainer"></div>
             <button type="button" id="addAdjustment">Add Adjustment</button>
 
+            <!-- Calculate Button -->
             <button type="button" onclick="calculateFees()">Calculate</button>
         </form>
 
         <!-- Display the calculation result -->
         <div id="result"></div>
 
-        <!-- Footer for extra info -->
+        <!-- Footer -->
         <footer>
             Powered by <a href="https://edufront.com/" target="_blank">Edufront</a>
         </footer>
