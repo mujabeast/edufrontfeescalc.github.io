@@ -68,13 +68,20 @@ function calculateFees() {
     const baseFeePerSubject = feeData[level][1]; // Original fee per subject without discounts
     const totalBaseFee = baseFeePerSubject * subjects;
 
-    // LMS Fee per subject
-    const materialsFeePerSubject = 60;
-    const totalMaterialsFee = isLMSFeeChecked ? materialsFeePerSubject * subjects : 0;
+    // LMS Fee per semester
+    const materialsFeePerSemester = 60;
+    let totalMaterialsFee = 0;
+    if (isLMSFeeChecked) {
+        if (paymentPlan === "halfYearly") totalMaterialsFee = materialsFeePerSemester; // One semester (6 months)
+        if (paymentPlan === "annually") totalMaterialsFee = materialsFeePerSemester * 2; // Two semesters (12 months)
+    }
 
     // Refundable deposit per subject
     const depositPerSubject = 50;
     const totalDepositFee = depositPerSubject * subjects;
+
+    // Registration fee (one-time, only for new students)
+    const registrationFee = isNewStudent ? 30 : 0;
 
     // Sibling discount rate based on the total sibling programmes
     const siblingDiscountRate = getDiscountRate(siblingSubjects);
@@ -102,15 +109,20 @@ function calculateFees() {
     const adjustedFee = totalBaseFee + totalAdjustments;
 
     // Subtotal before GST
-    const subtotalBeforeGST = adjustedFee - siblingDiscount - paymentDiscount + totalMaterialsFee;
+    const subtotalBeforeGST = adjustedFee - siblingDiscount - paymentDiscount + totalMaterialsFee + registrationFee;
 
     // Apply GST at the very end (exclude deposit from GST)
     const gstRate = 0.09;
     const gstAmount = subtotalBeforeGST * gstRate;
     const totalWithGST = subtotalBeforeGST + gstAmount;
 
-    // Final total including refundable deposit
-    const finalFee = totalWithGST + totalDepositFee;
+    // Final total for the selected payment plan
+    let finalFee = totalWithGST + totalDepositFee;
+    if (paymentPlan === "halfYearly") {
+        finalFee = (subtotalBeforeGST * (1 + gstRate)) + totalDepositFee; // 6 months
+    } else if (paymentPlan === "annually") {
+        finalFee = ((subtotalBeforeGST * 2) * (1 + gstRate)) + totalDepositFee; // 12 months
+    }
 
     // Display breakdown
     document.getElementById('result').innerHTML = `
@@ -121,10 +133,11 @@ function calculateFees() {
         <p>- Sibling Discount (${(siblingDiscountRate * 100).toFixed(0)}% on ${subjects} subjects): <strong>-$${siblingDiscount.toFixed(2)}</strong></p>
         <p>- Payment Plan Discount (${(paymentDiscountRate * 100).toFixed(0)}%): <strong>-$${paymentDiscount.toFixed(2)}</strong></p>
         <p>Total Discount: <strong>-$${(siblingDiscount + paymentDiscount).toFixed(2)}</strong></p>
-        <p>+ LMS & Materials Fee ($60 per subject for ${subjects} subjects): <strong>$${totalMaterialsFee.toFixed(2)}</strong></p>
+        <p>+ LMS & Materials Fee: <strong>$${totalMaterialsFee.toFixed(2)}</strong></p>
+        <p>+ Registration Fee: <strong>$${registrationFee.toFixed(2)}</strong></p>
         <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
         <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
-        <h4>Final Fee (after GST and fees): <strong>$${finalFee.toFixed(2)}</strong></h4>
+        <h4>Final Fee (${paymentPlan === "halfYearly" ? "6 months" : "12 months"}): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
 }
