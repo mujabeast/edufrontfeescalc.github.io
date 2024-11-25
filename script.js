@@ -68,77 +68,59 @@ function calculateFees() {
     const baseFeePerSubject = feeData[level][1]; // Original fee per subject without discounts
     const totalBaseFee = baseFeePerSubject * subjects;
 
-    // LMS Fee per semester
+    // Sibling Discount
+    const siblingDiscountRate = getDiscountRate(siblingSubjects); // 20% for 5+ subjects
+    const siblingDiscount = totalBaseFee * siblingDiscountRate;
+
+    // Payment Plan Discount
+    let paymentDiscountRate = 0;
+    if (paymentPlan === "halfYearly") paymentDiscountRate = 0.02; // 2%
+    if (paymentPlan === "annually") paymentDiscountRate = 0.05; // 5%
+    const paymentDiscount = totalBaseFee * paymentDiscountRate;
+
+    // Adjusted Monthly Fee
+    const adjustedMonthlyFee = totalBaseFee - siblingDiscount - paymentDiscount;
+
+    // Fee for 6 months or 12 months based on Payment Plan
+    const totalFeeForPlan = adjustedMonthlyFee * (paymentPlan === "halfYearly" ? 6 : 12);
+
+    // LMS Fee (per semester)
     const materialsFeePerSubject = 60;
     let totalMaterialsFee = 0;
     if (isLMSFeeChecked) {
-        if (paymentPlan === "halfYearly") {
-            totalMaterialsFee = materialsFeePerSubject * subjects; // One semester
-        } else if (paymentPlan === "annually") {
-            totalMaterialsFee = materialsFeePerSubject * subjects * 2; // Two semesters
-        }
+        totalMaterialsFee = materialsFeePerSubject * subjects * (paymentPlan === "halfYearly" ? 1 : 2);
     }
 
-    // Refundable deposit per subject
+    // Registration Fee (one-time for new students)
+    const registrationFee = isNewStudent ? 30 : 0;
+
+    // Refundable Deposit
     const depositPerSubject = 50;
     const totalDepositFee = depositPerSubject * subjects;
 
-    // Registration fee (one-time, only for new students)
-    const registrationFee = isNewStudent ? 30 : 0;
+    // Subtotal Before GST (adjusted monthly fee * months + additional fees)
+    const subtotalBeforeGST = totalFeeForPlan + totalMaterialsFee + registrationFee;
 
-    // Sibling discount rate based on the total sibling programmes
-    const siblingDiscountRate = getDiscountRate(siblingSubjects);
-    const siblingDiscount = siblingDiscountRate * totalBaseFee;
-
-    // Payment plan discount rate
-    let paymentDiscountRate = 0;
-    if (paymentPlan === "halfYearly") paymentDiscountRate = 0.02;
-    if (paymentPlan === "annually") paymentDiscountRate = 0.05;
-
-    const paymentDiscount = totalBaseFee * paymentDiscountRate;
-
-    // Adjustments
-    let totalAdjustments = 0;
-    let adjustmentDetails = '';
-    document.querySelectorAll('.adjustmentAmount').forEach((input, index) => {
-        const adjustment = parseFloat(input.value) || 0;
-        totalAdjustments += adjustment;
-
-        const remarks = document.querySelectorAll('.adjustmentRemarks')[index].value || 'Adjustment';
-        adjustmentDetails += `<p>${remarks}: $${adjustment.toFixed(2)}</p>`;
-    });
-
-    // Adjusted monthly fee
-    const adjustedMonthlyFee = totalBaseFee + totalAdjustments - siblingDiscount - paymentDiscount;
-
-    // Subtotal before GST (monthly)
-    const subtotalBeforeGST = adjustedMonthlyFee;
-
-    // Apply GST at the very end (exclude deposit and registration fee from GST)
+    // GST
     const gstRate = 0.09;
     const gstAmount = subtotalBeforeGST * gstRate;
-    const totalWithGSTMonthly = subtotalBeforeGST + gstAmount;
 
-    // Final total for the selected payment plan
-    let finalFee = totalWithGSTMonthly + totalDepositFee + registrationFee + totalMaterialsFee;
-    if (paymentPlan === "halfYearly") {
-        finalFee = (totalWithGSTMonthly * 6) + totalMaterialsFee + registrationFee + totalDepositFee;
-    } else if (paymentPlan === "annually") {
-        finalFee = (totalWithGSTMonthly * 12) + totalMaterialsFee + registrationFee + totalDepositFee;
-    }
+    // Final Fee (including refundable deposit)
+    const finalFee = subtotalBeforeGST + gstAmount + totalDepositFee;
 
     // Display breakdown
     document.getElementById('result').innerHTML = `
         <h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${totalBaseFee.toFixed(2)}</strong></p>
-        ${adjustmentDetails}
-        <p>Adjusted Monthly Fee: <strong>$${adjustedMonthlyFee.toFixed(2)}</strong></p>
         <p>- Sibling Discount (${(siblingDiscountRate * 100).toFixed(0)}%): <strong>-$${siblingDiscount.toFixed(2)}</strong></p>
         <p>- Payment Plan Discount (${(paymentDiscountRate * 100).toFixed(0)}%): <strong>-$${paymentDiscount.toFixed(2)}</strong></p>
+        <p>Adjusted Monthly Fee: <strong>$${adjustedMonthlyFee.toFixed(2)}</strong></p>
+        <p>Fee for ${paymentPlan === "halfYearly" ? "6 months" : "12 months"}: <strong>$${totalFeeForPlan.toFixed(2)}</strong></p>
         <p>+ LMS & Materials Fee: <strong>$${totalMaterialsFee.toFixed(2)}</strong></p>
         <p>+ Registration Fee: <strong>$${registrationFee.toFixed(2)}</strong></p>
-        <p>+ Refundable Deposit: <strong>$${totalDepositFee.toFixed(2)}</strong></p>
-        <p>+ GST (9% on subtotal): <strong>$${gstAmount.toFixed(2)}</strong></p>
+        <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
+        <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
+        <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
         <h4>Final Fee (${paymentPlan === "halfYearly" ? "6 months" : "12 months"}): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
 }
