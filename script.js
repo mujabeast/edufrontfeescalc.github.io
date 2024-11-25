@@ -69,11 +69,14 @@ function calculateFees() {
     const totalBaseFee = baseFeePerSubject * subjects;
 
     // LMS Fee per semester
-    const materialsFeePerSemester = 60;
+    const materialsFeePerSubject = 60;
     let totalMaterialsFee = 0;
     if (isLMSFeeChecked) {
-        if (paymentPlan === "halfYearly") totalMaterialsFee = materialsFeePerSemester; // One semester (6 months)
-        if (paymentPlan === "annually") totalMaterialsFee = materialsFeePerSemester * 2; // Two semesters (12 months)
+        if (paymentPlan === "halfYearly") {
+            totalMaterialsFee = materialsFeePerSubject * subjects; // One semester
+        } else if (paymentPlan === "annually") {
+            totalMaterialsFee = materialsFeePerSubject * subjects * 2; // Two semesters
+        }
     }
 
     // Refundable deposit per subject
@@ -105,23 +108,23 @@ function calculateFees() {
         adjustmentDetails += `<p>${remarks}: $${adjustment.toFixed(2)}</p>`;
     });
 
-    // Adjusted fee
-    const adjustedFee = totalBaseFee + totalAdjustments;
+    // Adjusted monthly fee
+    const adjustedMonthlyFee = totalBaseFee + totalAdjustments - siblingDiscount - paymentDiscount;
 
-    // Subtotal before GST
-    const subtotalBeforeGST = adjustedFee - siblingDiscount - paymentDiscount + totalMaterialsFee + registrationFee;
+    // Subtotal before GST (monthly)
+    const subtotalBeforeGST = adjustedMonthlyFee;
 
-    // Apply GST at the very end (exclude deposit from GST)
+    // Apply GST at the very end (exclude deposit and registration fee from GST)
     const gstRate = 0.09;
     const gstAmount = subtotalBeforeGST * gstRate;
-    const totalWithGST = subtotalBeforeGST + gstAmount;
+    const totalWithGSTMonthly = subtotalBeforeGST + gstAmount;
 
     // Final total for the selected payment plan
-    let finalFee = totalWithGST + totalDepositFee;
+    let finalFee = totalWithGSTMonthly + totalDepositFee + registrationFee + totalMaterialsFee;
     if (paymentPlan === "halfYearly") {
-        finalFee = (subtotalBeforeGST * (1 + gstRate)) + totalDepositFee; // 6 months
+        finalFee = (totalWithGSTMonthly * 6) + totalMaterialsFee + registrationFee + totalDepositFee;
     } else if (paymentPlan === "annually") {
-        finalFee = ((subtotalBeforeGST * 2) * (1 + gstRate)) + totalDepositFee; // 12 months
+        finalFee = (totalWithGSTMonthly * 12) + totalMaterialsFee + registrationFee + totalDepositFee;
     }
 
     // Display breakdown
@@ -129,15 +132,13 @@ function calculateFees() {
         <h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${totalBaseFee.toFixed(2)}</strong></p>
         ${adjustmentDetails}
-        <p>Adjusted Base Fee: <strong>$${adjustedFee.toFixed(2)}</strong></p>
-        <p>- Sibling Discount (${(siblingDiscountRate * 100).toFixed(0)}% on ${subjects} subjects): <strong>-$${siblingDiscount.toFixed(2)}</strong></p>
+        <p>Adjusted Monthly Fee: <strong>$${adjustedMonthlyFee.toFixed(2)}</strong></p>
+        <p>- Sibling Discount (${(siblingDiscountRate * 100).toFixed(0)}%): <strong>-$${siblingDiscount.toFixed(2)}</strong></p>
         <p>- Payment Plan Discount (${(paymentDiscountRate * 100).toFixed(0)}%): <strong>-$${paymentDiscount.toFixed(2)}</strong></p>
-        <p>Total Discount: <strong>-$${(siblingDiscount + paymentDiscount).toFixed(2)}</strong></p>
         <p>+ LMS & Materials Fee: <strong>$${totalMaterialsFee.toFixed(2)}</strong></p>
         <p>+ Registration Fee: <strong>$${registrationFee.toFixed(2)}</strong></p>
-        <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
-        <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
-        <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
+        <p>+ Refundable Deposit: <strong>$${totalDepositFee.toFixed(2)}</strong></p>
+        <p>+ GST (9% on subtotal): <strong>$${gstAmount.toFixed(2)}</strong></p>
         <h4>Final Fee (${paymentPlan === "halfYearly" ? "6 months" : "12 months"}): <strong>$${finalFee.toFixed(2)}</strong></h4>
     `;
 }
