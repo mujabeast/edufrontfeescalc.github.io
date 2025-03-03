@@ -110,20 +110,12 @@ function calculateFees() {
     const depositPerSubject = 50;
     const totalDepositFee = depositPerSubject * subjects;
 
-    // Calculate total adjustments
-    const adjustmentsContainer = document.getElementById('adjustmentsContainer');
-    const adjustmentAmounts = adjustmentsContainer.getElementsByClassName('adjustmentAmount');
-    let totalAdjustments = 0;
-    for (let i = 0; i < adjustmentAmounts.length; i++) {
-        totalAdjustments += parseFloat(adjustmentAmounts[i].value) || 0;
-    }
-
     // Subtotal Before GST (adjusted monthly fee * months + additional fees)
-    let subtotalBeforeGST = totalFeeForPlan + totalMaterialsFee + registrationFee + totalAdjustments;
+    let subtotalBeforeGST = totalFeeForPlan + totalMaterialsFee + registrationFee;
 
     // For monthly plans, subtotal should only include 1 month's fee
     if (paymentPlan === "monthly") {
-        subtotalBeforeGST = adjustedMonthlyFee + totalMaterialsFee + registrationFee + totalAdjustments;
+        subtotalBeforeGST = adjustedMonthlyFee + totalMaterialsFee + registrationFee;
     }
 
     // GST
@@ -131,7 +123,16 @@ function calculateFees() {
     const gstAmount = subtotalBeforeGST * gstRate;
 
     // Final Fee (including refundable deposit)
-    const finalFee = subtotalBeforeGST + gstAmount + totalDepositFee;
+    let finalFee = subtotalBeforeGST + gstAmount + totalDepositFee;
+
+    // Calculate total adjustments and add to final fee
+    const adjustmentsContainer = document.getElementById('adjustmentsContainer');
+    const adjustmentAmounts = adjustmentsContainer.getElementsByClassName('adjustmentAmount');
+    let totalAdjustments = 0;
+    for (let i = 0; i < adjustmentAmounts.length; i++) {
+        totalAdjustments += parseFloat(adjustmentAmounts[i].value) || 0;
+    }
+    finalFee += totalAdjustments;
 
     // Display breakdown
     document.getElementById('result').innerHTML = 
@@ -143,9 +144,9 @@ function calculateFees() {
         ${paymentPlan === "monthly" ? "" : `<p>Fee for ${paymentPlanDescription}: <strong>$${totalFeeForPlan.toFixed(2)}</strong></p>`}
         <p>+ LMS & Materials Fee: <strong>$${totalMaterialsFee.toFixed(2)}</strong></p>
         <p>+ Registration Fee: <strong>$${registrationFee.toFixed(2)}</strong></p>
-        <p>+ Adjustments: <strong>$${totalAdjustments.toFixed(2)}</strong></p>
         <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
         <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
+        <p>+ Adjustments: <strong>$${totalAdjustments.toFixed(2)}</strong></p>
         <h4>Final Fee (${paymentPlan === "monthly" ? "Monthly" : paymentPlanDescription}): <strong>$${finalFee.toFixed(2)}</strong></h4>`;
 }
