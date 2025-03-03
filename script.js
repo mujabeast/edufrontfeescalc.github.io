@@ -110,12 +110,13 @@ function calculateFees() {
     const depositPerSubject = 50;
     const totalDepositFee = depositPerSubject * subjects;
 
-    // Adjustments
-    const adjustmentAmounts = document.querySelectorAll('.adjustmentAmount');
+    // Calculate total adjustments
+    const adjustmentsContainer = document.getElementById('adjustmentsContainer');
+    const adjustmentAmounts = adjustmentsContainer.getElementsByClassName('adjustmentAmount');
     let totalAdjustments = 0;
-    adjustmentAmounts.forEach(input => {
-        totalAdjustments += parseFloat(input.value) || 0;
-    });
+    for (let i = 0; i < adjustmentAmounts.length; i++) {
+        totalAdjustments += parseFloat(adjustmentAmounts[i].value) || 0;
+    }
 
     // Subtotal Before GST (adjusted monthly fee * months + additional fees)
     let subtotalBeforeGST = totalFeeForPlan + totalMaterialsFee + registrationFee + totalAdjustments;
