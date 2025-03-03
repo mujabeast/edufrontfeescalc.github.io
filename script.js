@@ -108,7 +108,12 @@ function calculateFees() {
     const totalDepositFee = depositPerSubject * subjects;
 
     // Subtotal Before GST (adjusted monthly fee * months + additional fees)
-    const subtotalBeforeGST = totalFeeForPlan + totalMaterialsFee + registrationFee;
+    let subtotalBeforeGST = totalFeeForPlan + totalMaterialsFee + registrationFee;
+
+    // For monthly plans, subtotal should only include 1 month's fee
+    if (paymentPlan === "monthly") {
+        subtotalBeforeGST = adjustedMonthlyFee + totalMaterialsFee + registrationFee;
+    }
 
     // GST
     const gstRate = 0.09;
@@ -124,11 +129,11 @@ function calculateFees() {
         <p>- Sibling Discount (${(siblingDiscountRate * 100).toFixed(0)}%): <strong>-$${siblingDiscount.toFixed(2)}</strong></p>
         <p>- Payment Plan Discount (${(paymentDiscountRate * 100).toFixed(0)}%): <strong>-$${paymentDiscount.toFixed(2)}</strong></p>
         <p>Adjusted Monthly Fee: <strong>$${adjustedMonthlyFee.toFixed(2)}</strong></p>
-        <p>Fee for ${paymentPlanDescription}: <strong>$${totalFeeForPlan.toFixed(2)}</strong></p>
+        ${paymentPlan === "monthly" ? "" : `<p>Fee for ${paymentPlanDescription}: <strong>$${totalFeeForPlan.toFixed(2)}</strong></p>`}
         <p>+ LMS & Materials Fee: <strong>$${totalMaterialsFee.toFixed(2)}</strong></p>
         <p>+ Registration Fee: <strong>$${registrationFee.toFixed(2)}</strong></p>
         <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
         <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
-        <h4>Final Fee (${paymentPlanDescription}): <strong>$${finalFee.toFixed(2)}</strong></h4>`;
+        <h4>Final Fee (${paymentPlan === "monthly" ? "Monthly" : paymentPlanDescription}): <strong>$${finalFee.toFixed(2)}</strong></h4>`;
 }
