@@ -128,11 +128,14 @@ function calculateFees() {
     // Calculate total adjustments and add to final fee
     const adjustmentsContainer = document.getElementById('adjustmentsContainer');
     const adjustmentAmounts = adjustmentsContainer.getElementsByClassName('adjustmentAmount');
-    let totalAdjustments = 0;
+    const adjustmentRemarks = adjustmentsContainer.getElementsByClassName('adjustmentRemarks');
+    let adjustmentsHtml = '';
     for (let i = 0; i < adjustmentAmounts.length; i++) {
-        totalAdjustments += parseFloat(adjustmentAmounts[i].value) || 0;
+        const amount = parseFloat(adjustmentAmounts[i].value) || 0;
+        const remark = adjustmentRemarks[i].value || 'Adjustment';
+        finalFee += amount;
+        adjustmentsHtml += `<p>+ ${remark}: <strong>$${amount.toFixed(2)}</strong></p>`;
     }
-    finalFee += totalAdjustments;
 
     // Display breakdown
     document.getElementById('result').innerHTML = 
@@ -147,6 +150,6 @@ function calculateFees() {
         <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
         <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
-        <p>+ Adjustments: <strong>$${totalAdjustments.toFixed(2)}</strong></p>
+        ${adjustmentsHtml}
         <h4>Final Fee (${paymentPlan === "monthly" ? "Monthly" : paymentPlanDescription}): <strong>$${finalFee.toFixed(2)}</strong></h4>`;
 }
