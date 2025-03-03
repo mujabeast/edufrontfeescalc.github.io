@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+// Function to calculate fees
 function calculateFees() {
     const level = document.getElementById('level').value;
     const subjects = parseInt(document.getElementById('subjects').value);
@@ -82,7 +83,15 @@ function calculateFees() {
     const adjustedMonthlyFee = totalBaseFee - siblingDiscount - paymentDiscount;
 
     // Fee for 6 months or 12 months based on Payment Plan
-    const totalFeeForPlan = adjustedMonthlyFee * (paymentPlan === "halfYearly" ? 6 : 12);
+    let totalFeeForPlan = adjustedMonthlyFee;
+    let paymentPlanDescription = "Monthly";
+    if (paymentPlan === "halfYearly") {
+        totalFeeForPlan = adjustedMonthlyFee * 6;
+        paymentPlanDescription = "6 months";
+    } else if (paymentPlan === "annually") {
+        totalFeeForPlan = adjustedMonthlyFee * 12;
+        paymentPlanDescription = "12 months";
+    }
 
     // LMS Fee (per semester)
     const materialsFeePerSubject = 60;
@@ -109,18 +118,17 @@ function calculateFees() {
     const finalFee = subtotalBeforeGST + gstAmount + totalDepositFee;
 
     // Display breakdown
-    document.getElementById('result').innerHTML = `
-        <h3>Fee Breakdown</h3>
+    document.getElementById('result').innerHTML = 
+        `<h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${totalBaseFee.toFixed(2)}</strong></p>
         <p>- Sibling Discount (${(siblingDiscountRate * 100).toFixed(0)}%): <strong>-$${siblingDiscount.toFixed(2)}</strong></p>
         <p>- Payment Plan Discount (${(paymentDiscountRate * 100).toFixed(0)}%): <strong>-$${paymentDiscount.toFixed(2)}</strong></p>
         <p>Adjusted Monthly Fee: <strong>$${adjustedMonthlyFee.toFixed(2)}</strong></p>
-        <p>Fee for ${paymentPlan === "halfYearly" ? "6 months" : "12 months"}: <strong>$${totalFeeForPlan.toFixed(2)}</strong></p>
+        <p>Fee for ${paymentPlanDescription}: <strong>$${totalFeeForPlan.toFixed(2)}</strong></p>
         <p>+ LMS & Materials Fee: <strong>$${totalMaterialsFee.toFixed(2)}</strong></p>
         <p>+ Registration Fee: <strong>$${registrationFee.toFixed(2)}</strong></p>
         <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
         <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
-        <h4>Final Fee (${paymentPlan === "halfYearly" ? "6 months" : "12 months"}): <strong>$${finalFee.toFixed(2)}</strong></h4>
-    `;
+        <h4>Final Fee (${paymentPlanDescription}): <strong>$${finalFee.toFixed(2)}</strong></h4>`;
 }
