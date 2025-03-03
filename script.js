@@ -97,7 +97,10 @@ function calculateFees() {
     const materialsFeePerSubject = 60;
     let totalMaterialsFee = 0;
     if (isLMSFeeChecked) {
-        totalMaterialsFee = materialsFeePerSubject * subjects * (paymentPlan === "halfYearly" ? 1 : 2);
+        totalMaterialsFee = materialsFeePerSubject * subjects;
+        if (paymentPlan !== "monthly") {
+            totalMaterialsFee *= (paymentPlan === "halfYearly" ? 1 : 2);
+        }
     }
 
     // Registration Fee (one-time for new students)
