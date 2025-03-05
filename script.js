@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const remarksInput = document.createElement('input');
         remarksInput.type = 'text';
-        remarksInput.placeholder = 'Remarks';
+        amountInput.placeholder = 'Remarks';
         remarksInput.classList.add('adjustmentRemarks');
 
         adjustmentDiv.appendChild(amountInput);
