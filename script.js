@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function calculateFees() {
     const level = document.getElementById('level').value;
     const subjects = parseInt(document.getElementById('subjects').value);
+    const siblingSubjects = parseInt(document.getElementById('siblingSubjects').value) || 0;
     const paymentPlan = document.getElementById('paymentPlan').value;
     const isNewStudent = document.getElementById('newStudent').value === "yes";
     const isLMSFeeChecked = document.getElementById('lmsFee').value === "yes";
@@ -68,9 +69,9 @@ function calculateFees() {
     const baseFeePerSubject = feeData[level][1]; // Original fee per subject without discounts
     const totalBaseFee = baseFeePerSubject * subjects;
 
-    // Bundle Discount
-    const bundleDiscountRate = getDiscountRate(subjects); // 20% for 5+ subjects
-    const bundleDiscount = totalBaseFee * bundleDiscountRate;
+    // Sibling Discount
+    const siblingDiscountRate = getDiscountRate(siblingSubjects); // 20% for 5+ subjects
+    const siblingDiscount = totalBaseFee * siblingDiscountRate;
 
     // Payment Plan Discount
     let paymentDiscountRate = 0;
@@ -79,7 +80,7 @@ function calculateFees() {
     const paymentDiscount = totalBaseFee * paymentDiscountRate;
 
     // Adjusted Monthly Fee
-    const adjustedMonthlyFee = totalBaseFee - bundleDiscount - paymentDiscount;
+    const adjustedMonthlyFee = totalBaseFee - siblingDiscount - paymentDiscount;
 
     // Fee for 6 months or 12 months based on Payment Plan
     let totalFeeForPlan = adjustedMonthlyFee;
@@ -144,7 +145,7 @@ function calculateFees() {
     document.getElementById('result').innerHTML = 
         `<h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${totalBaseFee.toFixed(2)}</strong></p>
-        <p>- Bundle Discount (${(bundleDiscountRate * 100).toFixed(0)}%): <strong>-$${bundleDiscount.toFixed(2)}</strong></p>
+        <p>- Sibling Discount (${(siblingDiscountRate * 100).toFixed(0)}%): <strong>-$${siblingDiscount.toFixed(2)}</strong></p>
         <p>- Payment Plan Discount (${(paymentDiscountRate * 100).toFixed(0)}%): <strong>-$${paymentDiscount.toFixed(2)}</strong></p>
         <p>Adjusted Monthly Fee: <strong>$${adjustedMonthlyFee.toFixed(2)}</strong></p>
         ${paymentPlan === "monthly" ? "" : `<p>Fee for ${paymentPlanDescription}: <strong>$${totalFeeForPlan.toFixed(2)}</strong></p>`}
