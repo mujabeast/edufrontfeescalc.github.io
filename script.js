@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const remarksInput = document.createElement('input');
         remarksInput.type = 'text';
-        amountInput.placeholder = 'Remarks';
+        remarksInput.placeholder = 'Remarks';
         remarksInput.classList.add('adjustmentRemarks');
 
         adjustmentDiv.appendChild(amountInput);
@@ -59,15 +59,14 @@ document.addEventListener("DOMContentLoaded", function () {
 // Function to calculate fees
 function calculateFees() {
     const level = document.getElementById('level').value;
-    const subjects = parseInt(document.getElementById('subjects').value);
-    const totalSubjects = parseInt(document.getElementById('siblingSubjects').value) || 0; // Inclusive of student
+    const totalSubjects = parseInt(document.getElementById('subjects').value); // Inclusive of student and siblings
     const paymentPlan = document.getElementById('paymentPlan').value;
     const isNewStudent = document.getElementById('newStudent').value === "yes";
     const isLMSFeeChecked = document.getElementById('lmsFee').value === "yes";
 
     // Base Fee
     const baseFeePerSubject = feeData[level][1]; // Original fee per subject without discounts
-    const totalBaseFee = baseFeePerSubject * subjects;
+    const totalBaseFee = baseFeePerSubject * totalSubjects;
 
     // Bundle Discount
     const bundleDiscountRate = getDiscountRate(totalSubjects); // Discount based on total subjects
@@ -97,7 +96,7 @@ function calculateFees() {
     const materialsFeePerSubject = 60;
     let totalMaterialsFee = 0;
     if (isLMSFeeChecked) {
-        totalMaterialsFee = materialsFeePerSubject * subjects;
+        totalMaterialsFee = materialsFeePerSubject * totalSubjects;
         if (paymentPlan !== "monthly") {
             totalMaterialsFee *= (paymentPlan === "halfYearly" ? 1 : 2);
         }
@@ -108,7 +107,7 @@ function calculateFees() {
 
     // Refundable Deposit
     const depositPerSubject = 50;
-    const totalDepositFee = depositPerSubject * subjects;
+    const totalDepositFee = depositPerSubject * totalSubjects;
 
     // Subtotal Before GST (adjusted monthly fee * months + additional fees)
     let subtotalBeforeGST = totalFeeForPlan + totalMaterialsFee + registrationFee;
@@ -144,7 +143,7 @@ function calculateFees() {
     // Display breakdown
     document.getElementById('result').innerHTML = 
         `<h3>Fee Breakdown</h3>
-        <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${totalBaseFee.toFixed(2)}</strong></p>
+        <p>Base Fee (for ${totalSubjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${totalBaseFee.toFixed(2)}</strong></p>
         <p>- Bundle Discount (${(bundleDiscountRate * 100).toFixed(0)}%): <strong>-$${bundleDiscount.toFixed(2)}</strong></p>
         <p>- Payment Plan Discount (${(paymentDiscountRate * 100).toFixed(0)}%): <strong>-$${paymentDiscount.toFixed(2)}</strong></p>
         <p>Adjusted Monthly Fee: <strong>$${adjustedMonthlyFee.toFixed(2)}</strong></p>
@@ -153,7 +152,7 @@ function calculateFees() {
         <p>+ Registration Fee: <strong>$${registrationFee.toFixed(2)}</strong></p>
         <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
-        <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
+        <p>+ Refundable Deposit ($50 per subject for ${totalSubjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
         ${adjustmentsHtml}
         <h4>Final Fee Before Refundable Deposit: <strong>$${finalFeeBeforeRD.toFixed(2)}</strong></h4>
         <h4>Final Fee (${paymentPlan === "monthly" ? "Monthly" : paymentPlanDescription}): <strong>$${finalFee.toFixed(2)}</strong></h4>`;
