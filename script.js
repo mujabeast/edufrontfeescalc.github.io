@@ -71,7 +71,7 @@ function calculateFees() {
     const totalBaseFee = baseFeePerSubject * subjects;
 
     // Bundle Discount
-    const bundleDiscountRate = getDiscountRate(totalSubjects); // 20% for 5+ subjects
+    const bundleDiscountRate = getDiscountRate(totalSubjects); // Discount based on total subjects
     const bundleDiscount = totalBaseFee * bundleDiscountRate;
 
     // Payment Plan Discount
