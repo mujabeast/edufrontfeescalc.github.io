@@ -3,75 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fee Calculator</title>
-    <style>
-        /* Basic CSS to restore design and colors */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        h1 {
-            color: #333;
-        }
-
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        div {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        select, input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        #result {
-            margin-top: 20px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <title>Edufront Fees Calculator</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Fee Calculator</h1>
-    <form id="feeForm">
-        <!-- Form fields -->
-        <div>
-            <label for="level">Level:</label>
+    <div class="container">
+        <h1>Edufront Fees Calculator</h1>
+        
+        <form id="feesForm">
+            <label for="level">Select Level:</label>
             <select id="level">
                 <option value="k2">K2</option>
                 <option value="primary1">Primary 1</option>
@@ -83,44 +23,47 @@
                 <option value="secondary1">Secondary 1</option>
                 <option value="secondary2">Secondary 2</option>
                 <option value="secondary3">Secondary 3</option>
-                <option value="olevels">O-Levels</option>
+                <option value="olevels">O/N Levels</option>
             </select>
-        </div>
-        <div>
-            <label for="subjects">Number of Subjects (Inclusive of siblings):</label>
-            <input type="number" id="subjects" min="1" required>
-        </div>
-        <div>
+
+            <label for="subjects">Number of Subjects:</label>
+            <input type="number" id="subjects" min="1" max="5" value="1">
+
+            <label for="siblingSubjects">Total Subjects Across All Siblings:</label>
+            <input type="number" id="siblingSubjects" min="0" placeholder="Enter total sibling subjects">
+
             <label for="paymentPlan">Payment Plan:</label>
             <select id="paymentPlan">
                 <option value="monthly">Monthly</option>
-                <option value="halfYearly">Half-Yearly</option>
-                <option value="annually">Annually</option>
+                <option value="halfYearly">Half-Yearly (2% discount)</option>
+                <option value="annually">Annually (5% discount)</option>
             </select>
-        </div>
-        <div>
-            <label for="newStudent">New Student:</label>
+
+            <label for="newStudent">Is this a New Student?</label>
             <select id="newStudent">
-                <option value="yes">Yes</option>
                 <option value="no">No</option>
+                <option value="yes">Yes</option>
             </select>
-        </div>
-        <div>
-            <label for="lmsFee">Include LMS & Materials Fee:</label>
+
+            <label for="lmsFee">LMS & Materials Fee Required?</label>
             <select id="lmsFee">
-                <option value="yes">Yes</option>
                 <option value="no">No</option>
+                <option value="yes">Yes</option>
             </select>
-        </div>
-        <div id="adjustmentsContainer">
-            <h3>Adjustments</h3>
-            <!-- Adjustments will be added here -->
-        </div>
-        <button type="button" id="addAdjustment">Add Adjustment</button>
-        <br><br>
-        <button type="button" onclick="calculateFees()">Calculate Fees</button>
-    </form>
-    <div id="result"></div>
+
+            <h2>Adjustments</h2>
+            <div id="adjustmentsContainer"></div>
+            <button type="button" id="addAdjustment">Add Adjustment</button>
+
+            <button type="button" onclick="calculateFees()">Calculate</button>
+        </form>
+
+        <div id="result"></div>
+
+        <footer>
+            Powered by <a href="https://edufront.com/" target="_blank">Edufront</a>
+        </footer>
+    </div>
 
     <script src="script.js"></script>
 </body>
