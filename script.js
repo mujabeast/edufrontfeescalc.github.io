@@ -60,8 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function calculateFees() {
     const level = document.getElementById('level').value;
     const subjects = parseInt(document.getElementById('subjects').value);
-    const siblingSubjects = parseInt(document.getElementById('siblingSubjects').value) || 0;
-    const totalSubjects = subjects + siblingSubjects;
+    const totalSubjects = parseInt(document.getElementById('siblingSubjects').value) || 0; // Inclusive of student
     const paymentPlan = document.getElementById('paymentPlan').value;
     const isNewStudent = document.getElementById('newStudent').value === "yes";
     const isLMSFeeChecked = document.getElementById('lmsFee').value === "yes";
