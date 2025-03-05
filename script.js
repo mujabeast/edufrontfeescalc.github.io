@@ -122,20 +122,24 @@ function calculateFees() {
     const gstRate = 0.09;
     const gstAmount = subtotalBeforeGST * gstRate;
 
-    // Final Fee (including refundable deposit)
-    let finalFee = subtotalBeforeGST + gstAmount + totalDepositFee;
-
     // Calculate total adjustments and add to final fee
     const adjustmentsContainer = document.getElementById('adjustmentsContainer');
     const adjustmentAmounts = adjustmentsContainer.getElementsByClassName('adjustmentAmount');
     const adjustmentRemarks = adjustmentsContainer.getElementsByClassName('adjustmentRemarks');
     let adjustmentsHtml = '';
+    let totalAdjustments = 0;
     for (let i = 0; i < adjustmentAmounts.length; i++) {
         const amount = parseFloat(adjustmentAmounts[i].value) || 0;
         const remark = adjustmentRemarks[i].value || 'Adjustment';
-        finalFee += amount;
+        totalAdjustments += amount;
         adjustmentsHtml += `<p>+ ${remark}: <strong>$${amount.toFixed(2)}</strong></p>`;
     }
+
+    // Final Fee (including refundable deposit)
+    let finalFee = subtotalBeforeGST + gstAmount + totalDepositFee + totalAdjustments;
+
+    // Final Fee Before Refundable Deposit
+    let finalFeeBeforeRD = subtotalBeforeGST + gstAmount + totalAdjustments;
 
     // Display breakdown
     document.getElementById('result').innerHTML = 
@@ -151,5 +155,6 @@ function calculateFees() {
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
         <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
         ${adjustmentsHtml}
+        <h4>Final Fee Before Refundable Deposit: <strong>$${finalFeeBeforeRD.toFixed(2)}</strong></h4>
         <h4>Final Fee (${paymentPlan === "monthly" ? "Monthly" : paymentPlanDescription}): <strong>$${finalFee.toFixed(2)}</strong></h4>`;
 }
