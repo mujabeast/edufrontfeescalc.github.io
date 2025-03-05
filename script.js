@@ -60,7 +60,6 @@ document.addEventListener("DOMContentLoaded", function () {
 function calculateFees() {
     const level = document.getElementById('level').value;
     const subjects = parseInt(document.getElementById('subjects').value);
-    const siblingSubjects = parseInt(document.getElementById('siblingSubjects').value) || 0;
     const paymentPlan = document.getElementById('paymentPlan').value;
     const isNewStudent = document.getElementById('newStudent').value === "yes";
     const isLMSFeeChecked = document.getElementById('lmsFee').value === "yes";
@@ -70,7 +69,7 @@ function calculateFees() {
     const totalBaseFee = baseFeePerSubject * subjects;
 
     // Sibling Discount
-    const siblingDiscountRate = getDiscountRate(siblingSubjects); // 20% for 5+ subjects
+    const siblingDiscountRate = getDiscountRate(subjects); // 20% for 5+ subjects
     const siblingDiscount = totalBaseFee * siblingDiscountRate;
 
     // Payment Plan Discount
