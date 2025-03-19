@@ -158,5 +158,5 @@ function calculateFees() {
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
         <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
         ${adjustmentsHtml}
-        <h4>Final Fee Before Refundable Deposit: <strong>$${finalFeeBeforeRD.toFixed(2)}</strong></h4>`;
+        <h4>Final Fee: <strong>$${finalFeeBeforeRD.toFixed(2)}</strong></h4>`;
 }
