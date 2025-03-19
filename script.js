@@ -148,7 +148,7 @@ function calculateFees() {
     document.getElementById('result').innerHTML = 
         `<h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${totalBaseFee.toFixed(2)}</strong></p>
-        <p>- Bundle Discount (${(bundleDiscountRate * 100).toFixed(0)}%): <strong>-$${bundleDiscount.toFixed(2)}</strong></p>
+        <p>- Multiple Subject Discount (${(bundleDiscountRate * 100).toFixed(0)}%): <strong>-$${bundleDiscount.toFixed(2)}</strong></p>
         <p>- Payment Plan Discount (${(paymentDiscountRate * 100).toFixed(0)}%): <strong>-$${paymentDiscount.toFixed(2)}</strong></p>
         <p>Adjusted Monthly Fee: <strong>$${adjustedMonthlyFee.toFixed(2)}</strong></p>
         ${paymentPlan === "monthly" ? "" : `<p>Fee for ${paymentPlanDescription}: <strong>$${totalFeeForPlan.toFixed(2)}</strong></p>`}
