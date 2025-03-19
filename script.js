@@ -156,7 +156,7 @@ function calculateFees() {
         <p>+ Registration Fee: <strong>$${registrationFee.toFixed(2)}</strong></p>
         <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
-        <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>
+        <h4> Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></h4>
         ${adjustmentsHtml}
         <h4>Final Fee: <strong>$${finalFeeBeforeRD.toFixed(2)}</strong></h4>`;
 }
