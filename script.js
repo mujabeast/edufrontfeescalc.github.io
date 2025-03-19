@@ -99,7 +99,5 @@ function calculateFees() {
         <p>Subtotal Before GST: <strong>$${subtotalBeforeGST.toFixed(2)}</strong></p>
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
         ${adjustmentsHtml}
-        <h4>Final Fee Before Refundable Deposit: <strong>$${finalFeeBeforeRD.toFixed(2)}</strong></h4>
-        <h4>Final Fee (${paymentPlan === "monthly" ? "Monthly" : paymentPlanDescription}): <strong>$${(paymentPlan === "monthly" ? finalFeeBeforeRD : finalFee).toFixed(2)}</strong></h4>
-        <p>+ Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></p>`;
+        <h4>Final Fee : <strong>$${finalFeeBeforeRD.toFixed(2)}</strong></h4>';
 }
