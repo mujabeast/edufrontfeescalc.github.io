@@ -1,4 +1,4 @@
-// Pricing data based on the fee chart
+=// Pricing data based on the fee chart
 const feeData = {
     k2: { 1: 170, 2: 162, 3: 153, 4: 145, 5: 136 },
     primary1: { 1: 180, 2: 171, 3: 162, 4: 153, 5: 144 },
@@ -66,20 +66,20 @@ function calculateFees() {
     const isLMSFeeChecked = document.getElementById('lmsFee').value === "yes";
 
     // Base Fee
-    const baseFeePerSubject = feeData[level][1]; // Original fee per subject without discounts
+    const baseFeePerSubject = feeData[level][1];
     const totalBaseFee = baseFeePerSubject * subjects;
 
     // Total subjects including siblings
     const totalSubjects = subjects + siblingSubjects;
 
     // Bundle Discount
-    const bundleDiscountRate = getDiscountRate(totalSubjects); // 20% for 5+ subjects
+    const bundleDiscountRate = getDiscountRate(totalSubjects);
     const bundleDiscount = totalBaseFee * bundleDiscountRate;
 
     // Payment Plan Discount
     let paymentDiscountRate = 0;
-    if (paymentPlan === "halfYearly") paymentDiscountRate = 0.02; // 2%
-    if (paymentPlan === "annually") paymentDiscountRate = 0.05; // 5%
+    if (paymentPlan === "halfYearly") paymentDiscountRate = 0.02;
+    if (paymentPlan === "annually") paymentDiscountRate = 0.05;
     const paymentDiscount = totalBaseFee * paymentDiscountRate;
 
     // Adjusted Monthly Fee
@@ -106,17 +106,15 @@ function calculateFees() {
         }
     }
 
-    // Registration Fee (one-time for new students)
+    // Registration Fee
     const registrationFee = isNewStudent ? 30 : 0;
 
     // Refundable Deposit
     const depositPerSubject = 50;
     const totalDepositFee = depositPerSubject * subjects;
 
-    // Subtotal Before GST (adjusted monthly fee * months + additional fees)
+    // Subtotal Before GST
     let subtotalBeforeGST = totalFeeForPlan + totalMaterialsFee + registrationFee;
-
-    // For monthly plans, subtotal should only include 1 month's fee
     if (paymentPlan === "monthly") {
         subtotalBeforeGST = adjustedMonthlyFee + totalMaterialsFee + registrationFee;
     }
@@ -125,7 +123,7 @@ function calculateFees() {
     const gstRate = 0.09;
     const gstAmount = subtotalBeforeGST * gstRate;
 
-    // Calculate total adjustments and add to final fee
+    // Adjustments
     const adjustmentsContainer = document.getElementById('adjustmentsContainer');
     const adjustmentAmounts = adjustmentsContainer.getElementsByClassName('adjustmentAmount');
     const adjustmentRemarks = adjustmentsContainer.getElementsByClassName('adjustmentRemarks');
@@ -138,13 +136,11 @@ function calculateFees() {
         adjustmentsHtml += `<p>+ ${remark}: <strong>$${amount.toFixed(2)}</strong></p>`;
     }
 
-    // Final Fee (including refundable deposit)
+    // Final Fees
     let finalFee = subtotalBeforeGST + gstAmount + totalDepositFee + totalAdjustments;
-
-    // Final Fee Before Refundable Deposit
     let finalFeeBeforeRD = subtotalBeforeGST + gstAmount + totalAdjustments;
 
-    // Display breakdown
+    // Output
     document.getElementById('result').innerHTML = 
         `<h3>Fee Breakdown</h3>
         <p>Base Fee (for ${subjects} subjects @ $${baseFeePerSubject}/subject): <strong>$${totalBaseFee.toFixed(2)}</strong></p>
@@ -158,5 +154,5 @@ function calculateFees() {
         <p>+ GST (9%): <strong>$${gstAmount.toFixed(2)}</strong></p>
         <h4> Refundable Deposit ($50 per subject for ${subjects} subjects): <strong>$${totalDepositFee.toFixed(2)}</strong></h4>
         ${adjustmentsHtml}
-        <h4>Final Fee: <strong>$${finalFeeBeforeRD.toFixed(2)}</strong></h4>`;
+        <h4>Final Fee (after refundable deposit): <strong>$${finalFee.toFixed(2)}</strong></h4>`;
 }
